@@ -1,0 +1,36 @@
+{
+  "name": "playwright-automation-backend",
+  "version": "1.0.0",
+  "description": "Enterprise Express backend for the Playwright Automation Dashboard. Controls test execution, serves artifacts, streams real-time progress via REST + Socket.IO.",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "start:prod": "NODE_ENV=production node src/server.js"
+  },
+  "keywords": [
+    "playwright",
+    "automation",
+    "dashboard",
+    "express",
+    "socket.io",
+    "testing"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "compression": "^1.8.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "fs-extra": "^11.3.0",
+    "helmet": "^8.1.0",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.2",
+    "nanoid": "^3.3.11",
+    "socket.io": "^4.8.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
