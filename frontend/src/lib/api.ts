@@ -6,7 +6,8 @@ import type { LogLine } from "./execution-store";
 
 const KEY = "pw:apiBaseUrl";
 const TOKEN_KEY = "pw:apiToken";
-export const DEFAULT_BASE_URL = "http://localhost:4000";
+export const DEFAULT_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 export function getApiBaseUrl(): string {
   if (typeof window === "undefined") return DEFAULT_BASE_URL;

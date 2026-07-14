@@ -1,0 +1,49 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Render Infrastructure-as-Code (IaC) Blueprint
+# https://render.com/docs/blueprint-spec
+#
+# Defines the backend web service for the Playwright Automation Dashboard.
+# The frontend is deployed separately on Vercel.
+#
+# Usage:
+#   1. Push this file to the root of your GitHub repository.
+#   2. Go to https://dashboard.render.com → New → Blueprint
+#   3. Connect your GitHub repo — Render will auto-detect this file.
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+  - type: web
+    name: playwright-backend
+    runtime: node
+    region: oregon
+
+    # ── Monorepo: only build/run from the backend directory ────────────────
+    rootDir: backend
+
+    # ── Build & Start ─────────────────────────────────────────────────────
+    buildCommand: npm install
+    startCommand: npm start
+
+    # ── Auto-deploy on every push to master ───────────────────────────────
+    branch: master
+    autoDeploy: true
+
+    # ── Health Check ──────────────────────────────────────────────────────
+    healthCheckPath: /health
+
+    # ── Environment Variables ─────────────────────────────────────────────
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "10000"
+      - key: HOST
+        value: "0.0.0.0"
+      - key: CORS_ORIGIN
+        value: "https://your-app-name.vercel.app"
+      - key: LOG_LEVEL
+        value: info
+      - key: UPLOADS_DIR
+        value: uploads
+      - key: PLAYWRIGHT_PROJECT_PATH
+        value: "../automation"
