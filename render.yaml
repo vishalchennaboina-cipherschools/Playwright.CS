@@ -4,46 +4,49 @@
 #
 # Defines the backend web service for the Playwright Automation Dashboard.
 # The frontend is deployed separately on Vercel.
-#
-# Usage:
-#   1. Push this file to the root of your GitHub repository.
-#   2. Go to https://dashboard.render.com → New → Blueprint
-#   3. Connect your GitHub repo — Render will auto-detect this file.
 # ─────────────────────────────────────────────────────────────────────────────
 
 services:
   - type: web
     name: playwright-backend
-    runtime: node
+    
+    # ── Docker Configuration ──────────────────────────────────────────────────
+    env: docker
+    rootDir: .
     region: oregon
 
-    # ── Monorepo: only build/run from the backend directory ────────────────
-    rootDir: backend
+    # ── Compute Requirements ──────────────────────────────────────────────────
+    plan: standard
 
-    # ── Build & Start ─────────────────────────────────────────────────────
-    buildCommand: npm install
-    startCommand: npm start
-
-    # ── Auto-deploy on every push to master ───────────────────────────────
+    # ── Auto-deploy on every push to master ───────────────────────────────────
     branch: master
     autoDeploy: true
 
-    # ── Health Check ──────────────────────────────────────────────────────
+    # ── Health Check ──────────────────────────────────────────────────────────
     healthCheckPath: /health
 
-    # ── Environment Variables ─────────────────────────────────────────────
+    # ── Persistent Storage ────────────────────────────────────────────────────
+    disk:
+      name: artifact-storage
+      # Must exactly match the absolute path inside the Docker container
+      mountPath: /app/backend/uploads
+      sizeGB: 10
+
+    # ── Environment Variables ─────────────────────────────────────────────────
     envVars:
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: "10000"
       - key: HOST
         value: "0.0.0.0"
       - key: CORS_ORIGIN
+        # MUST exactly match your deployed Vercel URL (e.g. https://your-app-name.vercel.app)
         value: "https://your-app-name.vercel.app"
-      - key: LOG_LEVEL
-        value: info
-      - key: UPLOADS_DIR
-        value: uploads
       - key: PLAYWRIGHT_PROJECT_PATH
         value: "../automation"
+      - key: PLAYWRIGHT_HEADED
+        value: "false"
+      - key: UPLOADS_DIR
+        value: "uploads"
+      - key: LOG_LEVEL
+        value: info
+      # Note: PORT is intentionally OMITTED. Render injects the PORT dynamically.

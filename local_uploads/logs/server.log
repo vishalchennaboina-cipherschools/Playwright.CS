@@ -1,0 +1,322 @@
+2026-07-14T16:03:31.402Z [SUCCESS] [Socket] Socket.IO server initialised
+ running
+2026-07-14T16:03:31.419Z [INFO] [Server] Socket.IO:   http://0.0.0.0:4000
+health
+2026-07-14T16:03:31.419Z [INFO] [Server] Uploads:     http://0.0.0.0:4000/uploads
+2026-07-14T16:06:03.372Z [INFO] [Socket] Client connected: w_Zk84vto7nSlHBPAAAB
+2026-07-14T16:08:03.278Z [DEBUG] [Socket] Client disconnected: w_Zk84vto7nSlHBPAAAB (transport close)
+2026-07-14T16:08:03.765Z [INFO] [Socket] Client connected: ubyUxgRFTRBwL8DyAAAD
+2026-07-14T16:09:29.390Z [DEBUG] [Socket] Client disconnected: ubyUxgRFTRBwL8DyAAAD (transport close)
+2026-07-14T16:09:30.559Z [INFO] [Socket] Client connected: NYDBWgD51ui-WnycAAAF
+2026-07-14T16:13:26.386Z [SUCCESS] [Socket] Socket.IO server initiali2026-07-14T162026-07-14T16:13:26.392Z [INFO] [Server] Uploads:     http://2026-07-14T2026-07-14T16:13:26.393Z [INFO] [Server] Playwright:  /app/automation
+/localhost:8080, http://localhost:5173
+2026-07-14T16:13:29.840Z [INFO] [Socket] Client connected: D-xkIQSKku3bDpajAAAB
+2026-07-14T16:13:43.226Z [DEBUG] [Socket] Client disconnected: D-xkIQSKku3bDpajAAAB (transport close)
+2026-07-14T16:13:44.710Z [DEBUG] [SpecDiscovery] 4 folders, 11 total spec files
+mation/tests
+2026-07-14T16:13:44.903Z [INFO] [Socket] Client connected: Jsnqn1anSgnn5ap9AAAD
+2026-07-14T16:14:08.720Z [INFO] [Runner] Spawning: npx playwright test tests/cipherschools/cipherschools.spec.js --project=chromium --workers=1 --headed --reporter=list {"cwd":"/app/automation","env":{"BASE_URL":"https://qa.cipherschools.com","EXEC_ID":"exec_MNk1m","CI":"true"}}
+2026-07-14T16:14:12.885Z [DEBUG] [Store] Updated execution exec_MNk1m ["status","duration","progress","currentStep"]
+2026-07-14T16:14:12.928Z [INFO] [Artifacts] Found 1 files in /app/automation/playwright-report
+2026-07-14T16:14:13.036Z [DEBUG] [Artifacts] Registered report: exec_MNk1m_IjwUju.html for exec_MNk1m
+2026-07-14T16:14:13.057Z [INFO] [Artifacts] Found 0 files in /app/automation/test-results
+2026-07-14T16:25:30.377Z [SUCCESS] [Socket] Socket.IO server 2026-07-14T16:25:30.32026-07-14T16:25:30.383Z [INFO] [Server] Uploads:     http://0.0.0.0:4000/2026-072026-07-14T16:25:30.383Z [INFO] [Server] Playwright:  /app/automation
+http://localhost:5173
+2026-07-14T16:25:35.840Z [INFO] [Socket] Client connected: 1k9UMKaRo83iN1_hAAAB
+2026-07-14T16:33:35.671Z [SUCCESS] [Socket] Socket.IO server 2026-07-2026-07-14T16:33:35.682Z [INFO] [Server] Health:      http://0.0.0.0:4000/health
+:4000/uploads
+2026-07-14T16:33:35.682Z [INFO] [Server] CORS:        http://localhost:8080, http://localhost:5173
+2026-07-14T16:33:39.049Z [INFO] [Socket] Client connected: xSofXbcwG527kIj1AAAB
+2026-07-14T16:34:36.280Z [DEBUG] [Socket] Client disconnected: xSofXbcwG527kIj1AAAB (transport close)
+2026-07-14T16:34:37.106Z [DEBUG] [SpecDiscovery] 4 folders, 11 total spec files
+mation/tests
+2026-07-14T16:34:37.311Z [INFO] [Socket] Client connected: 8lxJQIGsCAH-1evXAAAD
+2026-07-14T16:34:49.433Z [DEBUG] [Store] Created execution exec_IhZ0U
+ tests/cipherschools/cipherschools.spec.js --project=chromium --workers=1 --headed --reporter=list {"cwd":"/app/automation","env":{"BASE_URL":"https://qa.cipherschools.com","EXEC_ID":"exec_IhZ0U","CI":"true"}}
+2026-07-14T16:34:51.088Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:34:52.487Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:34:53.296Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:34:54.050Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:34:54.887Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:34:55.698Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:34:57.073Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:34:57.958Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:34:58.941Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:34:59.820Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:00.680Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:01.678Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:02.459Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:03.388Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:04.299Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:05.231Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:06.055Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:06.986Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:07.931Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:08.839Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:09.716Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:10.561Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:11.436Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:12.299Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:13.102Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:13.937Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:14.863Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:15.685Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:16.488Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:17.412Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:18.237Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:19.097Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:19.962Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.752Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.796Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.798Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.799Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.803Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.807Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.808Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.808Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.809Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.817Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.819Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.822Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.824Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.827Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.832Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.832Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.833Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.835Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.837Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.839Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.840Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.846Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.847Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.846Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.848Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.850Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.852Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.854Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.856Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.857Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.860Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.859Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.864Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.865Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.865Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.865Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.868Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.870Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.871Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.872Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.873Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.873Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.874Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.875Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.875Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.876Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.876Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.876Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.877Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.888Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.890Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.891Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.891Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.891Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.891Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.892Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.892Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.893Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.894Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.895Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.896Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.898Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.912Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.913Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.913Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.914Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.914Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.915Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.916Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.916Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.916Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.917Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.930Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.930Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.938Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.938Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.939Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.939Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.939Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.948Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.948Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.948Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.948Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.949Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.948Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.950Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.951Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.952Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.953Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.953Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.954Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.955Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.957Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.957Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.959Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.959Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.959Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.963Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.964Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.964Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.964Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.991Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.993Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.994Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.996Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.996Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.997Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.999Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.999Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:20.999Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.000Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.001Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.001Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.002Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.002Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.002Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.003Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.010Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.015Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.018Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.019Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.019Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.026Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.027Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.028Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.028Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.028Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.028Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.029Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.029Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.029Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.029Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.030Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.030Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.030Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.032Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.033Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.034Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.034Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.035Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.035Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.037Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.038Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.038Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.044Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.048Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.048Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.049Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.053Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.054Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.054Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.054Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.054Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.054Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.055Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.055Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.055Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.055Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.055Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.055Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.055Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.056Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.056Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.056Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.056Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.056Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.057Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.057Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.057Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.057Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.057Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.058Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.058Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.058Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.058Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.059Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.059Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.059Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.059Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.059Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.060Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.060Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.060Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.060Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.061Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.061Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.062Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.062Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.063Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.064Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.065Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.065Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.065Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.065Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.066Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.066Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.067Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.067Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.067Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.067Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.068Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.068Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.084Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.094Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.094Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.096Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.098Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.097Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.106Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.106Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.107Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.107Z [DEBUG] [Store] Updated execution exec_IhZ0U ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:35:21.123Z [SUCCESS] [Runner] Execution exec_IhZ0U completed: failed in 32s
+,"progress","currentStep"]
+2026-07-14T16:35:21.801Z [INFO] [Artifacts] Found 1 files in /app/automation/playwright-report
+2026-07-14T16:35:21.898Z [DEBUG] [Artifacts] Registered report: exec_IhZ0U_8yX0V8.html for exec_IhZ0U
+2026-07-14T16:35:22.123Z [INFO] [Artifacts] Found 45 files in /app/automation/test-results
+2026-07-14T16:35:22.198Z [DEBUG] [Artifacts] Registered trace: exec_IhZ0U_Jth4yD.zip for exec_IhZ0U
+2026-07-14T16:35:22.248Z [DEBUG] [Artifacts] Registered trace: exec_IhZ0U_l7AhLq.zip for exec_IhZ0U
+2026-07-14T16:35:22.298Z [DEBUG] [Artifacts] Registered trace: exec_IhZ0U_i38L9t.zip for exec_IhZ0U
+2026-07-14T16:35:22.356Z [DEBUG] [Artifacts] Registered trace: exec_IhZ0U_6zZrh7.zip for exec_IhZ0U
+2026-07-14T16:35:22.418Z [DEBUG] [Artifacts] Registered trace: exec_IhZ0U_CWilSP.zip for exec_IhZ0U
+2026-07-14T16:35:22.469Z [DEBUG] [Artifacts] Registered trace: exec_IhZ0U_B7zM4M.zip for exec_IhZ0U
+2026-07-14T16:35:22.531Z [DEBUG] [Artifacts] Registered trace: exec_IhZ0U_gSXT99.zip for exec_IhZ0U
+2026-07-14T16:35:22.595Z [DEBUG] [Artifacts] Registered trace: exec_IhZ0U_eF1JSp.zip for exec_IhZ0U
+2026-07-14T16:35:22.669Z [DEBUG] [Artifacts] Registered trace: exec_IhZ0U_tv0KhB.zip for exec_IhZ0U
+2026-07-14T16:35:22.730Z [DEBUG] [Artifacts] Registered trace: exec_IhZ0U_Rh-7fu.zip for exec_IhZ0U
+2026-07-14T16:35:22.787Z [DEBUG] [Artifacts] Registered trace: exec_IhZ0U_KqVs0X.zip for exec_IhZ0U
+2026-07-14T16:48:44.098Z [INFO] [Socket] Client connected: G2LegnONnf3B1Zg_AAAF
+2026-07-14T16:48:47.795Z [DEBUG] [Socket] Client disconnected: G2LegnONnf3B1Zg_AAAF (transport close)
+2026-07-14T16:51:25.527Z [INFO] [Socket] Service initialised
+2026-07-14T16:51:25.534Z [INFO] [Server] REST API:    http://0.0.0.0:4000
+2026-07-14T16:51:25.528Z [SUCCESS] [Socket] Socket.IO server initialised
+ running
+2026-07-14T16:51:25.535Z [INFO] [Server] Uploads:     http://0.0.0.0:4000/uploads
+//localhost:5173
+2026-07-14T16:51:25.536Z [INFO] [Server] Playwright:  /app/automation
+2026-07-14T16:51:29.841Z [INFO] [Socket] Client connected: DhSHEGhcmGGvdNj8AAAB
+2026-07-14T16:51:52.557Z [DEBUG] [Socket] Client disconnected: DhSHEGhcmGGvdNj8AAAB (transport close)
+2026-07-14T16:51:53.400Z [DEBUG] [SpecDiscovery] 4 folders, 11 total spec files
+mation/tests
+2026-07-14T16:51:53.624Z [INFO] [Socket] Client connected: 8cmVGulQCFDpyUu4AAAD
+2026-07-14T16:53:30.712Z [DEBUG] [Socket] Client disconnected: 8cmVGulQCFDpyUu4AAAD (transport close)
+2026-07-14T16:53:31.740Z [INFO] [SpecDiscovery] Found 11 spec files in /app/automation/tests
+2026-07-14T16:53:31.978Z [INFO] [Socket] Client connected: 0TNwmKybSZEgPgTuAAAF
+2026-07-14T16:53:40.490Z [WARN] [Runner] Running in headless mode because PLAYWRIGHT_HEADED is disabled.
+s/cipherschools/new.spec.js --project=chromium --workers=1 --reporter=list {"cwd":"/app/automation","env":{"BASE_URL":"https://qa.cipherschools.com","EXEC_ID":"exec_4r5hp","CI":"true"}}
+2026-07-14T16:53:41.586Z [DEBUG] [Store] Updated execution exec_4r5hp ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:53:49.043Z [DEBUG] [Store] Updated execution exec_4r5hp ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:53:49.125Z [DEBUG] [Store] Updated execution exec_4r5hp ["passed","failed","skipped","progress","totalPlanned","currentFile","currentTest","currentStep","duration"]
+2026-07-14T16:53:49.165Z [DEBUG] [Store] Updated execution exec_4r5hp ["status","duration","progress","currentStep"]
+2026-07-14T16:53:49.176Z [INFO] [Artifacts] Found 1 files in /app/automation/playwright-report
+2026-07-14T16:53:49.251Z [DEBUG] [Artifacts] Registered report: exec_4r5hp_xHcD8j.html for exec_4r5hp
+2026-07-14T16:53:49.259Z [INFO] [Artifacts] Found 1 files in /app/automation/test-results

@@ -1,0 +1,37 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: playwright-dashboard-backend:latest
+    container_name: playwright_dashboard_backend
+    ports:
+      - "4000:4000"
+    environment:
+      # Mirrors production Render environment variables
+      - NODE_ENV=production
+      - HOST=0.0.0.0
+      - PORT=4000
+      - CORS_ORIGIN=http://localhost:8080,http://localhost:5173
+      - PLAYWRIGHT_PROJECT_PATH=../automation
+      - PLAYWRIGHT_HEADED=false
+      - UPLOADS_DIR=uploads
+      - LOG_LEVEL=debug
+    volumes:
+      # Mount source code for fast local development without rebuilding the Docker image
+      - ./backend:/app/backend
+      - ./automation:/app/automation
+      # Preserve the node_modules generated inside the Linux container during the image build.
+      # This prevents host machine binaries from overwriting the container's binaries.
+      - /app/backend/node_modules
+      - /app/automation/node_modules
+      # Persist artifacts locally to perfectly simulate Render's persistent disk storage
+      - ./local_uploads:/app/backend/uploads
+    healthcheck:
+      # Native Node.js healthcheck mirroring the Dockerfile logic
+      test: [ "CMD-SHELL", "node -e \"const http = require('http'); const req = http.get('http://localhost:4000/health', (res) => { if (res.statusCode !== 200) process.exit(1); process.exit(0); }); req.on('error', () => process.exit(1));\"" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped

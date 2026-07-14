@@ -36,8 +36,8 @@ const activeProcesses = new Map();
  */
 async function buildCommand(execution) {
   const cwd = config.playwrightProjectPath;
-  const command = 'npx';
-  const args = ['playwright', 'test'];
+  const command = path.join(cwd, 'node_modules', '.bin', process.platform === 'win32' ? 'playwright.cmd' : 'playwright');
+  const args = ['test'];
 
   // Spec files (now resolved dynamically)
   const files = await resolveSpecFiles(execution.suite, execution.specFile);
@@ -55,8 +55,16 @@ async function buildCommand(execution) {
   args.push(`--workers=${execution.workers}`);
 
   // Headed mode
+  const allowHeaded = process.env.PLAYWRIGHT_HEADED === 'true';
+
   if (execution.mode === 'Headed') {
-    args.push('--headed');
+    if (allowHeaded) {
+      args.push('--headed');
+    } else {
+      logger.warn(
+        '[Runner] Running in headless mode because PLAYWRIGHT_HEADED is disabled.',
+      );
+    }
   }
 
   // Reporter — always include list for parseable stdout
