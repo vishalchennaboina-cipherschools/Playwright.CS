@@ -1,6 +1,13 @@
 // @ts-check
 import { test, expect } from '@playwright/test';
 
+async function clickSignin(page) {
+  const signInButton = page.getByRole('button', { name: /^Signin$/i });
+  await expect(signInButton).toBeVisible({ timeout: 20000 });
+  await expect(signInButton).toBeEnabled({ timeout: 20000 });
+  await signInButton.click();
+}
+
 test('CipherSchools', async ({ page }) => {
   test.setTimeout(60000); // Set timeout to 60 seconds
   await page.goto('https://qa.cipherschools.com/');
@@ -25,7 +32,7 @@ test('Login with valid credentials', async ({ page }) => {
   await page.locator('input[type="email"]').fill('luffydmonkey6988420@gmail.com');
   await page.locator('input[type="password"]').click();
   await page.locator('input[type="password"]').fill('123456789000');
-  await page.getByRole('button', { name: 'Signin' }).click();
+  await clickSignin(page);
 
 
   // Verify login

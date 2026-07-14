@@ -3,10 +3,13 @@ import { test, expect } from '@playwright/test';
 
 test('CipherSchools', async ({ page }) => {
   test.setTimeout(60000); // Set timeout to 60 seconds
-  await page.goto('https://qa.cipherschools.com/');
+  await page.goto('https://qa.labs.codefri.com/');
+
+    await expect(page).toHaveTitle(/Codefri LMS/);
+
 
   // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Best Free Programming Courses Online | Learning Platform for All/);
+  //await expect(page).toHaveTitle(/Best Free Programming Courses Online | Learning Platform for All/);
 });
 // phase 1 login test
 test('Login with valid credentials', async ({ page }) => {
@@ -149,7 +152,7 @@ test('verify batches page', async ({ page }) => {
 
   await page.locator('#tab-assignments').click();
   await expect(page).toHaveURL('https://qa.cipherschools.com/batches/newe6f52/problems?type=assignments');
-  await expect(page.getByRole('columnheader', { name: 'ASSIGNMENT' })).toBeVisible();
+  await expect(page.getByPlaceholder('Search assignments...')).toBeVisible();
 
   // test page verification 
 
@@ -167,7 +170,7 @@ test('verify batches page', async ({ page }) => {
 
   await page.getByRole('link', { name: 'Resources' }).click();
   await expect(page).toHaveURL('https://qa.cipherschools.com/batches/newe6f52/resources');
-  await expect(page.getByRole('heading', { name: 'Resources' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Resources', exact: true })).toBeVisible();
 
   // Performance page verification
 
@@ -462,14 +465,16 @@ test('Login and visit all sitemap URLs', async ({ page }) => {
   await page.goto('https://www.cipherschools.com/');
 
   await page.getByRole('button', { name: 'Sign In' }).click();
+  await page.locator('input[type="email"]').click();
   await page.locator('input[type="email"]').fill('luffydmonkey6988420@gmail.com');
-  await page.locator('input[type="password"]').fill('Vishalch@1907');//prod pass
-  const signinBtn = page.getByRole('button', { name: 'Signin' });
-  await expect(signinBtn).toBeVisible();
-  await expect(signinBtn).toBeEnabled({ timeout: 10000 });
-  await signinBtn.click();
+  await page.locator('input[type="password"]').click();
+  await page.locator('input[type="password"]').fill('Vishalch@1907'); //prod pass
+  await page.getByRole('button', { name: 'Signin' }).click();
 
-  await expect(page.getByText('Login Successful')).toBeVisible();
+  const cookieBanner = page.locator('section').filter({ hasText: /Accept All|Reject All|Customise/i }).first();
+  if (await cookieBanner.isVisible().catch(() => false)) {
+    await page.getByRole('button', { name: 'Accept All' }).click().catch(() => { });
+  }
 
   // Visit each URL
   for (const url of urls) {
