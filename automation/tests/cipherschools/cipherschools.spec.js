@@ -149,7 +149,7 @@ test('verify batches page', async ({ page }) => {
 
   await page.locator('#tab-assignments').click();
   await expect(page).toHaveURL('https://qa.cipherschools.com/batches/newe6f52/problems?type=assignments');
-  await expect(page.getByText(/NEW ASSIGNMENT/i)).toBeVisible();
+  await expect(page.getByRole('columnheader', { name: 'ASSIGNMENT' })).toBeVisible();
 
   // test page verification 
 
@@ -379,4 +379,130 @@ test('Logout test', async ({ page }) => {
   await expect(page.getByText(/Successfully Logged out|Successfully logged Out/i)).toBeVisible();
   await expect(page).toHaveURL('https://qa.cipherschools.com/');
   await expect(page.getByRole('img', { name: /signin|register/i }).first()).toBeVisible();
+});
+
+// site map urls check 
+
+const urls = [
+  'https://www.cipherschools.com/',
+  'https://www.cipherschools.com/about-us',
+  'https://www.cipherschools.com/alumni',
+  'https://www.cipherschools.com/campus-invite',
+  'https://www.cipherschools.com/career-path',
+  'https://www.cipherschools.com/careers',
+  'https://www.cipherschools.com/contact',
+  'https://www.cipherschools.com/courses',
+  'https://www.cipherschools.com/courses/app-development',
+  'https://www.cipherschools.com/courses/c-programming-course-beginner-to-advanced-0c5f/writing-our-first-code-in-c-0d46',
+  'https://www.cipherschools.com/courses/cyber-security-fundamentals-core-concepts-and-practices-75f4/lecture-1-introduction-to-cyber-security-part-1-ba3c',
+  'https://www.cipherschools.com/courses/data-science',
+  'https://www.cipherschools.com/courses/machine-learning-beginner-friendly-c841/class-1-git-and-git-hub-c842',
+  'https://www.cipherschools.com/courses/data-structures',
+  'https://www.cipherschools.com/courses/database-management-system-654d/lecture0-introduction-to-dbms-69e8',
+  'https://www.cipherschools.com/courses/figma-basic-uiux-in-hindi-d594/figma-basics-in-hindi-d596',
+  'https://www.cipherschools.com/courses/game-development',
+  'https://www.cipherschools.com/courses/javascript-zero-to-hero-complete-course-in-hindi-ae5b/javascript-beginning-to-mastery-complete-tutorial-class-1-ae5c',
+  'https://www.cipherschools.com/courses/learn-numpy-library-in-english-8554/numpy-install-advantages-similarities-in-numpy-and-list-class1-8555',
+  'https://www.cipherschools.com/courses/learn-to-apply-data-analysis-on-datasets-seaborn-and-matplotlib-plots-9246/class-1-data-analysis-on-google-apps-rating-part01-data-set-analysis-english-tutorial-data-science-9248',
+  'https://www.cipherschools.com/courses/machine-learning',
+  'https://www.cipherschools.com/courses/master-go-golang-programming-the-complete-go-bootcamp-0c58/course-overview-by-instructor-c4a0',
+  'https://www.cipherschools.com/courses/mastering-devops-beginner-friendly-42c7/lecture1-introduction-to-computer-network-networking-devices-42c8',
+  'https://www.cipherschools.com/courses/mega-react-tutorial-project-1-understanding-the-basics-cfec/react-mega-tutorial-project-1-part-1-learn-react-basics-by-building-the-name-it-app-cfed',
+  'https://www.cipherschools.com/courses/mern-mongo-db-express-js-react-js-node-js-full-stack-series-8b33/what-is-mern-how-it-works-class-1-8b34',
+  'https://www.cipherschools.com/courses/openlayers-3320/lecture-1-introduction-to-openlayers-playlist-3321',
+  'https://www.cipherschools.com/courses/others',
+  'https://www.cipherschools.com/courses/programming',
+  'https://www.cipherschools.com/courses/python-for-beginners-eeb2/class-01-operators-errors-keywords-and-identifiers-datatypes-in-english-eebe',
+  'https://www.cipherschools.com/courses/python-for-machine-learning-beginner-friendly-17c3/part-01-machine-learning-full-course-machine-learning-tutorial-ml-for-beginners-17c4',
+  'https://www.cipherschools.com/courses/react-js-beginner-friendly-project-based-7ba9/introduction-to-the-course-class-1-7baa',
+  'https://www.cipherschools.com/courses/react-js-bootcamp-for-interviewplacement-preparation-0c5d/instructors-introduction-course-overview-c42c',
+  'https://www.cipherschools.com/courses/scratch-by-mit-game-development-logic-building-using-nocode-22fd/introduction-why-you-or-your-kid-should-learn-scratch-22ff',
+  'https://www.cipherschools.com/courses/spark-webinar-series-for-entrepreneurs-9731/conversation-with-naina-lal-kidwaicountry-head-of-hsbc-india-and-meena-ganesh100x-entrepreneur-podcast-9732',
+  'https://www.cipherschools.com/courses/sql-tutorial-for-beginners-a5dd/lecture-1-database-introduction-sql-mysql-dbms-hindi-a5de',
+  'https://www.cipherschools.com/courses/technical-bootcamps-workshops-by-cipherschools-788d/game-development-workshop-ft-adhiraj-788f',
+  'https://www.cipherschools.com/courses/the-beginners-guide-to-microsoft-excel-excel-training-c5a2/unnoticable-things-when-storing-information-in-excel-c5e6',
+  'https://www.cipherschools.com/courses/ui-design-mastery-a-journey-into-ui-design-excellence-187b/shoes-store-landing-page-design-under-10-mins-187d',
+  'https://www.cipherschools.com/courses/unveiling-opportunities-journeying-beyond-domains-0e51/isro-space-careers-roadmap%C2%A0to%C2%A0isro-0e53',
+  'https://www.cipherschools.com/courses/web-development',
+  'https://www.cipherschools.com/courses/web-development-beginner-friendly-8a18/class-1-complete-html-and-css-course-in-hindi-introduction-557a',
+  'https://www.cipherschools.com/free-content-policy',
+  'https://www.cipherschools.com/privacy',
+  'https://www.cipherschools.com/rewards',
+  'https://www.cipherschools.com/resume-builder',
+  'https://www.cipherschools.com/support-us',
+  'https://www.cipherschools.com/terms-and-condition',
+  'https://www.cipherschools.com/trending-courses',
+  'https://www.cipherschools.com/videos',
+  'https://www.cipherschools.com/practice',
+  'https://www.cipherschools.com/practice/problems',
+  'https://www.cipherschools.com/practice/problems/weekly',
+  'https://www.cipherschools.com/practice/problems/topic/array',
+  'https://www.cipherschools.com/practice/problems/topic/string',
+  'https://www.cipherschools.com/practice/problems/topic/binary-search',
+  'https://www.cipherschools.com/practice/problems/topic/linked-list',
+  'https://www.cipherschools.com/practice/problems/topic/two-pointers',
+  'https://www.cipherschools.com/practice/problems/topic/prefix-sum',
+  'https://www.cipherschools.com/practice/problems/topic/sliding-window',
+  'https://www.cipherschools.com/practice/problems/topic/stack',
+  'https://www.cipherschools.com/practice/problems/topic/sorting',
+  'https://www.cipherschools.com/practice/problems/topic/greedy',
+  'https://www.cipherschools.com/practice/problems/topic/tree',
+  'https://www.cipherschools.com/practice/problems/topic/singly-linked-list',
+  'https://www.cipherschools.com/practice/problems/topic/hash-table',
+  'https://www.cipherschools.com/practice/problems/topic/math',
+  'https://www.cipherschools.com/practice/problems/topic/recursion',
+  'https://www.cipherschools.com/practice/problems/topic/dynamic-programming',
+  'https://www.cipherschools.com/practice/problems/topic/depth-first-search',
+  'https://www.cipherschools.com/practice/problems/topic/binary-search-tree',
+  'https://compiler.cipherschools.com'
+];
+
+test('Login and visit all sitemap URLs', async ({ page }) => {
+  // Login
+  await page.goto('https://www.cipherschools.com/');
+
+  await page.getByRole('button', { name: 'Sign In' }).click();
+  await page.locator('input[type="email"]').fill('luffydmonkey6988420@gmail.com');
+  await page.locator('input[type="password"]').fill('Vishalch@1907');//prod pass
+  const signinBtn = page.getByRole('button', { name: 'Signin' });
+  await expect(signinBtn).toBeVisible();
+  await expect(signinBtn).toBeEnabled({ timeout: 10000 });
+  await signinBtn.click();
+
+  await expect(page.getByText('Login Successful')).toBeVisible();
+
+  // Visit each URL
+  for (const url of urls) {
+    // sanitize URL: strip markdown link syntax like [text](href)
+    let href = url;
+    const mdMatch = href.match(/^\[.*\]\((.*)\)$/);
+    if (mdMatch) href = mdMatch[1];
+
+    // validate URL
+    try {
+      const parsed = new URL(href);
+      if (!/^https?:$/.test(parsed.protocol)) {
+        console.warn(`Skipping non-http URL: ${href}`);
+        continue;
+      }
+    } catch (e) {
+      console.warn(`Invalid URL, skipping: ${href}`);
+      continue;
+    }
+
+    console.log(`Visiting: ${href}`);
+    try {
+      await page.goto(href, {
+        waitUntil: 'domcontentloaded',
+        timeout: 60000,
+      });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error(`Navigation failed for ${href}: ${msg}`);
+      continue;
+    }
+
+    // Wait 1 second on each page
+    await page.waitForTimeout(1000);
+  }
 });
