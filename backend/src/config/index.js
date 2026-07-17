@@ -56,6 +56,16 @@ const config = Object.freeze({
   ),
 
   mongoUri: process.env.MONGODB_URI,
+
+  outputDir: process.env.OUTPUT_DIR || path.join(
+    path.resolve(__dirname, '../../..', process.env.PLAYWRIGHT_PROJECT_PATH || '../automation'), 
+    'test-results'
+  ),
+
+  reportDir: process.env.REPORT_DIR || path.join(
+    path.resolve(__dirname, '../../..', process.env.PLAYWRIGHT_PROJECT_PATH || '../automation'), 
+    'playwright-report'
+  ),
 });
 
 module.exports = config;

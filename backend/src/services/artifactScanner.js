@@ -64,12 +64,10 @@ function extractTestName(filePath) {
  * @param {string} status      - Final execution status.
  */
 async function scanAndRegister(execId, suite, environment, status) {
-  const frameworkRoot = config.playwrightProjectPath;
-
-  // Directories to scan (Playwright default output locations).
+  // Directories to scan (Read from environment config).
   const scanDirs = [
-    path.join(frameworkRoot, 'playwright-report'),
-    path.join(frameworkRoot, 'test-results'),
+    config.reportDir,
+    config.outputDir,
   ];
 
   for (const dir of scanDirs) {
