@@ -13,6 +13,7 @@ const config = require('./config');
 const { createSocketServer } = require('./socket');
 const logger = require('./utils/logger');
 const { ensureDir } = require('./utils/fileHelper');
+const { connectDB, disconnectDB } = require('./config/db');
 
 async function bootstrap() {
   // Ensure upload directories exist.
@@ -22,6 +23,9 @@ async function bootstrap() {
   await ensureDir(`${config.uploadsDir}/videos`);
   await ensureDir(`${config.uploadsDir}/traces`);
   await ensureDir(`${config.uploadsDir}/logs`);
+
+  // Connect to MongoDB
+  await connectDB();
 
   // Create Express app.
   const app = createApp();
@@ -49,8 +53,9 @@ async function bootstrap() {
   function shutdown(signal) {
     logger.warn(`[Server] Received ${signal}. Shutting down gracefully…`);
 
-    server.close(() => {
+    server.close(async () => {
       logger.info('[Server] HTTP server closed');
+      await disconnectDB();
       process.exit(0);
     });
 

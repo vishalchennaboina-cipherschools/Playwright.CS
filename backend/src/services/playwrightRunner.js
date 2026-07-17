@@ -4,7 +4,7 @@
  * Builds Playwright commands, spawns child processes, parses stdout/stderr,
  * tracks execution progress, and updates the execution store in real time.
  *
- * This service NEVER modifies the Playwright framework — it only executes it.
+ * This service NEVER modifies the Playwright framework - it only executes it.
  *
  * @module services/playwrightRunner
  */
@@ -67,7 +67,7 @@ async function buildCommand(execution) {
     }
   }
 
-  // Reporter — always include list for parseable stdout
+  // Reporter - always include list for parseable stdout
   args.push('--reporter=list');
 
   return { command, args, cwd };
@@ -77,9 +77,9 @@ async function buildCommand(execution) {
  * Parse a Playwright stdout line and extract progress information.
  *
  * Playwright list reporter format examples:
- *   "  ✓  1 [chromium] › tests/auth/login.spec.js:12 › user can log in (812ms)"
- *   "  ✗  2 [chromium] › tests/auth/login.spec.js:12 › user can log in (812ms)"
- *   "  -  3 [chromium] › tests/auth/login.spec.js:12 › user can log in"
+ *   "  checkmark  1 [chromium] > tests/auth/login.spec.js:12 > user can log in (812ms)"
+ *   "  fail mark  2 [chromium] > tests/auth/login.spec.js:12 > user can log in (812ms)"
+ *   "  -  3 [chromium] > tests/auth/login.spec.js:12 > user can log in"
  *   "  4 passed"
  *   "  1 failed"
  *   "  2 skipped"
@@ -94,22 +94,22 @@ function parseLine(line, execution) {
 
   const logLine = createLogLine(trimmed, detectLogLevel(trimmed));
 
-  // Detect spec file + test name: "[chromium] › path/to/spec.js:N › test name"
-  const specMatch = trimmed.match(/\[[\w-]+\]\s+›\s+(.+?):(\d+)\s+›\s+(.+?)(?:\s+\(|$)/);
+  // Detect spec file + test name: "[chromium] > path/to/spec.js:N > test name"
+  const specMatch = trimmed.match(/\[[\w-]+\]\s+(?:\u203a|>)\s+(.+?):(\d+)\s+(?:\u203a|>)\s+(.+?)(?:\s+\(|$)/);
   if (specMatch) {
     execution.currentFile = specMatch[1];
     execution.currentTest = specMatch[3].replace(/\s*\([\d.]+[ms]+\)\s*$/, '');
     execution.currentStep = 'running';
   }
 
-  // Detect pass: "✓" or starts with "✓"
-  if (/✓|√/.test(trimmed)) {
+  // Detect pass: checkmark or square root symbol.
+  if (/\u2713|\u221a/.test(trimmed)) {
     execution.passed += 1;
     logLine.level = 'pass';
   }
 
-  // Detect fail: "✗" or "×" or "✘"
-  if (/✗|×|✘/.test(trimmed)) {
+  // Detect fail: common cross/fail symbols.
+  if (/\u2717|\u00d7|\u2718/.test(trimmed)) {
     execution.failed += 1;
     logLine.level = 'fail';
   }
@@ -151,7 +151,7 @@ function parseLine(line, execution) {
 /**
  * Spawn a Playwright test execution.
  *
- * This function is non-blocking — it starts the child process and returns
+ * This function is non-blocking - it starts the child process and returns
  * immediately. Progress is tracked via stdout parsing and store updates.
  *
  * @param {Object} execution - Full ExecutionDetail object (already in store).
@@ -167,24 +167,24 @@ async function spawnExecution(execution) {
 
   // Add initial log
   const initLog = createLogLine(
-    `→ ${command} ${args.join(' ')}`,
+    `-> ${command} ${args.join(' ')}`,
     'info',
   );
-  executionStore.appendLog(execution.id, initLog);
+  await executionStore.appendLog(execution.id, initLog);
   socketService.emitLog(execution.id, initLog);
 
   const envLog = createLogLine(
     `Loading configuration for ${execution.environment} environment (${envVars.BASE_URL})`,
     'info',
   );
-  executionStore.appendLog(execution.id, envLog);
+  await executionStore.appendLog(execution.id, envLog);
   socketService.emitLog(execution.id, envLog);
 
   const workerLog = createLogLine(
-    `Launching ${execution.workers} workers · ${execution.browser} · ${execution.mode.toLowerCase()}`,
+    `Launching ${execution.workers} workers - ${execution.browser} - ${execution.mode.toLowerCase()}`,
     'info',
   );
-  executionStore.appendLog(execution.id, workerLog);
+  await executionStore.appendLog(execution.id, workerLog);
   socketService.emitLog(execution.id, workerLog);
 
   let child;
@@ -198,34 +198,36 @@ async function spawnExecution(execution) {
     });
   } catch (err) {
     logger.error(`[Runner] Failed to spawn process for ${execution.id}`, err);
-    const errorLog = createLogLine(`✗ Failed to start: ${err.message}`, 'fail');
-    executionStore.appendLog(execution.id, errorLog);
-    executionStore.update(execution.id, {
+    const errorLog = createLogLine(`Failed to start: ${err.message}`, 'fail');
+    await executionStore.appendLog(execution.id, errorLog);
+    await executionStore.update(execution.id, {
       status: EXEC_STATUS.FAILED,
       duration: calcDuration(execution.startedAt),
       currentStep: 'spawn failed',
     });
-    historyService.record(executionStore.get(execution.id));
+    const finalExec = await executionStore.get(execution.id);
+    await historyService.record(finalExec);
+    await executionStore.remove(execution.id);
     socketService.emitError(execution.id, err.message);
     return;
   }
 
   activeProcesses.set(execution.id, child);
 
-  // ── stdout handler ───────────────────────────────────────────────────────
-  child.stdout.on('data', (data) => {
+  // stdout handler
+  child.stdout.on('data', async (data) => {
     const lines = data.toString().split('\n');
     for (const line of lines) {
       if (!line.trim()) continue;
 
-      const current = executionStore.get(execution.id);
+      const current = await executionStore.get(execution.id);
       if (!current) continue;
 
       const { shouldUpdate, logLine } = parseLine(line, current);
 
       if (shouldUpdate && logLine) {
-        executionStore.appendLog(execution.id, logLine);
-        executionStore.update(execution.id, {
+        await executionStore.appendLog(execution.id, logLine);
+        await executionStore.update(execution.id, {
           passed: current.passed,
           failed: current.failed,
           skipped: current.skipped,
@@ -251,26 +253,27 @@ async function spawnExecution(execution) {
     }
   });
 
-  // ── stderr handler ───────────────────────────────────────────────────────
-  child.stderr.on('data', (data) => {
+  // stderr handler
+  child.stderr.on('data', async (data) => {
     const text = data.toString().trim();
     if (!text) return;
 
     const logLine = createLogLine(text, 'warn');
-    executionStore.appendLog(execution.id, logLine);
+    await executionStore.appendLog(execution.id, logLine);
     socketService.emitLog(execution.id, logLine);
   });
 
-  // ── Process exit ─────────────────────────────────────────────────────────
-  child.on('close', (code) => {
+  // Process exit
+  child.on('close', async (code) => {
     activeProcesses.delete(execution.id);
 
-    const current = executionStore.get(execution.id);
+    const current = await executionStore.get(execution.id);
     if (!current) return;
 
     // If already aborted (user stopped), don't override status.
     if (current.status === EXEC_STATUS.ABORTED) {
-      historyService.record(current);
+      await historyService.record(current);
+      await executionStore.remove(execution.id);
       socketService.emitCompleted(current);
       return;
     }
@@ -279,20 +282,21 @@ async function spawnExecution(execution) {
     const duration = calcDuration(execution.startedAt);
 
     const summaryLine = createLogLine(
-      `${finalStatus === EXEC_STATUS.PASSED ? '✓' : '✗'} ${current.passed} passed · ${current.failed} failed · ${current.skipped} skipped  (${Math.floor(duration / 60)}m ${duration % 60}s)`,
+      `${finalStatus.toUpperCase()} ${current.passed} passed - ${current.failed} failed - ${current.skipped} skipped (${Math.floor(duration / 60)}m ${duration % 60}s)`,
       finalStatus === EXEC_STATUS.PASSED ? 'pass' : 'fail',
     );
 
-    executionStore.appendLog(execution.id, summaryLine);
-    executionStore.update(execution.id, {
+    await executionStore.appendLog(execution.id, summaryLine);
+    await executionStore.update(execution.id, {
       status: finalStatus,
       duration,
       progress: 100,
       currentStep: 'finished',
     });
 
-    const finalExec = executionStore.get(execution.id);
-    historyService.record(finalExec);
+    const finalExec = await executionStore.get(execution.id);
+    await historyService.record(finalExec);
+    await executionStore.remove(execution.id);
     socketService.emitCompleted(finalExec);
 
     logger.success(`[Runner] Execution ${execution.id} completed: ${finalStatus} in ${duration}s`);
@@ -308,21 +312,22 @@ async function spawnExecution(execution) {
     });
   });
 
-  // ── Process error (e.g. ENOENT) ──────────────────────────────────────────
-  child.on('error', (err) => {
+  // Process error (e.g. ENOENT)
+  child.on('error', async (err) => {
     activeProcesses.delete(execution.id);
     logger.error(`[Runner] Process error for ${execution.id}`, err);
 
-    const errorLog = createLogLine(`✗ Process error: ${err.message}`, 'fail');
-    executionStore.appendLog(execution.id, errorLog);
-    executionStore.update(execution.id, {
+    const errorLog = createLogLine(`Process error: ${err.message}`, 'fail');
+    await executionStore.appendLog(execution.id, errorLog);
+    await executionStore.update(execution.id, {
       status: EXEC_STATUS.FAILED,
       duration: calcDuration(execution.startedAt),
       currentStep: 'process error',
     });
 
-    const finalExec = executionStore.get(execution.id);
-    historyService.record(finalExec);
+    const finalExec = await executionStore.get(execution.id);
+    await historyService.record(finalExec);
+    await executionStore.remove(execution.id);
     socketService.emitError(execution.id, err.message);
   });
 
@@ -336,21 +341,21 @@ async function spawnExecution(execution) {
  * @param {string} execId - Execution ID.
  * @returns {boolean} True if the process was found and killed.
  */
-function stopExecution(execId) {
+async function stopExecution(execId) {
   const child = activeProcesses.get(execId);
   if (!child) return false;
 
   logger.info(`[Runner] Stopping execution ${execId}`);
 
   // Update store before killing so the close handler sees "aborted".
-  executionStore.update(execId, {
+  await executionStore.update(execId, {
     status: EXEC_STATUS.ABORTED,
-    duration: calcDuration(executionStore.get(execId)?.startedAt),
+    duration: calcDuration((await executionStore.get(execId))?.startedAt),
     currentStep: 'aborted by user',
   });
 
-  const abortLog = createLogLine('⚠ Execution aborted by user', 'warn');
-  executionStore.appendLog(execId, abortLog);
+  const abortLog = createLogLine('Execution aborted by user', 'warn');
+  await executionStore.appendLog(execId, abortLog);
 
   if (process.platform === 'win32') {
     const { exec } = require('child_process');

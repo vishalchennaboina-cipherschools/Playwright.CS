@@ -1,115 +1,111 @@
 // @ts-check
-import { defineConfig, devices } from '@playwright/test';
+// playwright.config.js
+//
+// ALL values come from the central config module (config/test.config.js).
+// That module reads environment variables injected by the backend's
+// environmentService.buildProcessEnv(). Nothing is hardcoded here.
+//
+// To run locally: copy automation/.env.example → automation/.env and fill in values.
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
+'use strict';
 
-/**
- * @see https://playwright.dev/docs/test-configuration
- */
-// export default defineConfig({
-//   testDir: './tests',
-//   /* Run tests in files in parallel */
-//   fullyParallel: true,
-//   /* Fail the build on CI if you accidentally left test.only in the source code. */
-//   forbidOnly: !!process.env.CI,
-//   /* Retry on CI only */
-//   retries: process.env.CI ? 2 : 0,
-//   /* Opt out of parallel tests on CI. */
-//   workers: process.env.CI ? 1 : undefined,
-//   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-//   reporter: 'html',
-//   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
-//   timeout: 80000,
-//   use: {
-//     /* Base URL to use in actions like `await page.goto('')`. */
-//     // baseURL: 'http://localhost:3000',
+// Pure CommonJS — no ESM bridge needed. package.json has "type": "commonjs"
+// so this .js file is treated as CJS by Node, matching test.config.js.
+const { defineConfig, devices } = require('@playwright/test');
+const cfg = require('./config/test.config');
 
-//     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-//     trace: 'on-first-retry',
-//   },
-
-//   /* Configure projects for major browsers */
-//   projects: [
-//     {
-//       name: 'chromium',
-//       use: { ...devices['Desktop Chrome'] },
-//     },
-
-//     // {
-//     //   name: 'firefox',
-//     //   use: { ...devices['Desktop Firefox'] },
-//     // },
-
-//     // {
-//     //   name: 'webkit',
-//     //   use: { ...devices['Desktop Safari'] },
-//     // },
-
-//     /* Test against mobile viewports. */
-//     // {
-//     //   name: 'Mobile Chrome',
-//     //   use: { ...devices['Pixel 5'] },
-//     // },
-//     // {
-//     //   name: 'Mobile Safari',
-//     //   use: { ...devices['iPhone 12'] },
-//     // },
-
-//     /* Test against branded browsers. */
-//     // {
-//     //   name: 'Microsoft Edge',
-//     //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-//     // },
-//     // {
-//     //   name: 'Google Chrome',
-//     //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-//     // },
-//   ],
-
-//   /* Run your local dev server before starting the tests */
-//   // webServer: {
-//   //   command: 'npm run start',
-//   //   url: 'http://localhost:3000',
-//   //   reuseExistingServer: !process.env.CI,
-//   // },
-// });
-
-export default defineConfig({
+module.exports = defineConfig({
   testDir: './tests',
 
-  outputDir: '/tmp/test-results',
+  // ── Output ──────────────────────────────────────────────────────────────
+  // Paths come from env vars (OUTPUT_DIR / REPORT_DIR).
+  // Backend sets these to /tmp/* in CI; locally they default to ./test-results.
+  outputDir: cfg.paths.testResults,
 
-  fullyParallel: true,
+  // ── Parallelism ──────────────────────────────────────────────────────────
+  fullyParallel: false,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  retries: cfg.retries,
+  // workers must be a number (not a raw string). parseInt gives Playwright
+  // the numeric count it expects; undefined falls back to Playwright's default.
+  workers: cfg.workers !== undefined ? parseInt(cfg.workers, 10) : undefined,
 
+  // ── Reporter ─────────────────────────────────────────────────────────────
   reporter: [
     [
       'html',
       {
-        outputFolder: '/tmp/playwright-report',
+        outputFolder: cfg.paths.reportOutput,
         open: 'never',
       },
     ],
+    ['list'], // machine-readable output for the backend log parser
   ],
 
-  timeout: 80000,
+  // ── Global timeout ───────────────────────────────────────────────────────
+  // Comes from TEST_TIMEOUT env var (default 80 s).
+  // Tests must NOT call test.setTimeout() — override here if needed.
+  timeout: cfg.timeouts.test,
 
+  // ── Shared use options ───────────────────────────────────────────────────
   use: {
-    trace: 'on-first-retry',
+    // Base URL — all page.goto('/path') calls resolve against this.
+    // Injected by backend as BASE_URL based on the selected environment.
+    baseURL: cfg.baseUrl,
+
+    // Timeouts
+    actionTimeout:     cfg.timeouts.action,
+    navigationTimeout: cfg.timeouts.navigation,
+
+    // Artifacts (all configurable from the dashboard).
+    // Playwright expects specific union literals ('off' | 'on' | ...).
+    // The env vars ARE valid values — the cast silences the @ts-check checker.
+    trace:      /** @type {any} */ (cfg.browser.trace),
+    video:      /** @type {any} */ (cfg.browser.video),
+    screenshot: /** @type {any} */ (cfg.browser.screenshot),
+
+    // Browser context options (only spread when set)
+    ...(cfg.browser.locale   ? { locale:   cfg.browser.locale }   : {}),
+    ...(cfg.browser.viewport ? { viewport: /** @type {any} */ (cfg.browser.viewport) } : {}),
+    // slowMo goes directly in the use block (not inside launchOptions).
+    ...(cfg.browser.slowMo   ? { slowMo:   cfg.browser.slowMo }   : {}),
   },
 
+  // ── Projects (browsers) ──────────────────────────────────────────────────
+  // The backend passes --project=<name> on the CLI when launching tests.
+  // All browser projects are defined here so the CLI flag resolves correctly.
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      name: 'setup',
+      testMatch: /.*\.setup\.js/,
     },
+    {
+      name: 'chromium',
+      use: { 
+        ...devices['Desktop Chrome'],
+        storageState: 'playwright/.auth/user.json',
+      },
+      dependencies: ['setup'],
+    },
+    // Firefox
+    // Enable after backend execution engine supports Firefox and it's validated for production.
+    // {
+    //   name: 'firefox',
+    //   use: { ...devices['Desktop Firefox'] },
+    // },
+    
+    // Edge
+    // Enable after full cross-browser test validation.
+    // {
+    //   name: 'msedge',
+    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
+    // },
+    
+    // WebKit
+    // Enable after browser mapping implementation in the backend and production validation.
+    // {
+    //   name: 'webkit',
+    //   use: { ...devices['Desktop Safari'] },
+    // },
   ],
 });

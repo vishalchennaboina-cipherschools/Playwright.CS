@@ -1,24 +1,27 @@
-import { test, expect } from '@playwright/test';
+// @ts-check
+// tests/cipherschools/new.spec.js
+//
+// Quick login smoke test.
+//
+// ─── Configuration contract ────────────────────────────────────────────────
+// No URLs, credentials, or timeouts are hardcoded here.
+// All values come from config/test.config.js (env vars injected by backend).
+// ──────────────────────────────────────────────────────────────────────────
+
+const { test, expect } = require('@playwright/test');
+const { loginAs } = require('../../helpers/auth.helper');
+const config = require('../../config/test.config');
+
+// Opt out of global auth state so this smoke test tests the actual login UI
+test.use({ storageState: { cookies: [], origins: [] } });
 
 test('Login with valid credentials', async ({ page }) => {
-    await page.goto('https://qa.cipherschools.com/');
+  // baseURL is set in playwright.config.js from the BASE_URL env var.
+  await page.goto('/');
 
-    // Open login popup
-    await page.getByRole('button', { name: 'Sign In' }).click();
+  // Credentials come from config (env vars) — never hardcoded.
+  await loginAs(page, config.credentials);
 
-    // Fill credentials
-    await page.locator('input[type="email"]').fill('luffydmonkey6988420@gmail.com');
-    await page.locator('input[type="password"]').fill('123456789000');
-
-    await page.getByRole('button', { name: 'Signin' }).click();
-
-    // Wait until login completes
-    // await page.waitForLoadState('networkidle');
-
-    // Verify login using a permanent UI element
-    //await expect(page.getByText('Hey Monke')).toBeVisible();
-
-    // await expect(page.getByText('Hey Monke')).toBeVisible();   
-
-
+  // Assert successful login
+  await expect(page.getByText('Login Successful')).toBeVisible();
 });

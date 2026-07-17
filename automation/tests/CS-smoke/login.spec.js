@@ -1,40 +1,34 @@
 // @ts-check
-import { test, expect } from '@playwright/test';
+// tests/CS-smoke/login.spec.js
+//
+// Smoke test suite — login verification.
+//
+// ─── Configuration contract ────────────────────────────────────────────────
+// No URLs, credentials, or timeouts are hardcoded here.
+// All values come from config/test.config.js (env vars injected by backend).
+// ──────────────────────────────────────────────────────────────────────────
 
-async function clickSignin(page) {
-  const signInButton = page.getByRole('button', { name: /^Signin$/i });
-  await expect(signInButton).toBeVisible({ timeout: 20000 });
-  await expect(signInButton).toBeEnabled({ timeout: 20000 });
-  await signInButton.click();
-}
+const { test, expect } = require('@playwright/test');
+const { loginAs } = require('../../helpers/auth.helper');
+const config = require('../../config/test.config');
 
-test('CipherSchools', async ({ page }) => {
-  test.setTimeout(60000); // Set timeout to 60 seconds
-  await page.goto('https://qa.cipherschools.com/');
+// Opt out of global auth state so this smoke test tests the actual login UI
+test.use({ storageState: { cookies: [], origins: [] } });
 
-  // Expect a title "to contain" a substring.
+// ─── Suite 1: App title ──────────────────────────────────────────────────────
+test('CipherSchools — verify app title', async ({ page }) => {
+  // baseURL is set in playwright.config.js from BASE_URL env var.
+  await page.goto('/');
   await expect(page).toHaveTitle(/Best Free Programming Courses Online | Learning Platform for All/);
 });
-// phase 1 login test
+
+// ─── Suite 2: Login ──────────────────────────────────────────────────────────
 test('Login with valid credentials', async ({ page }) => {
-  // test.setTimeout(80000);
+  await page.goto('/');
 
-  await page.goto('https://qa.cipherschools.com/');
+  // Credentials come from config (env vars injected by backend) — never hardcoded.
+  await loginAs(page, config.credentials);
 
-  // Open login popup
-  await page.getByRole('button', { name: 'Sign In' }).click();
-
-  // Wait for popup
-  // await expect(page.getByLabel('Email ID')).toBeVisible();
-
-  // Fill credentials
-  await page.locator('input[type="email"]').click();
-  await page.locator('input[type="email"]').fill('luffydmonkey6988420@gmail.com');
-  await page.locator('input[type="password"]').click();
-  await page.locator('input[type="password"]').fill('123456789000');
-  await clickSignin(page);
-
-
-  // Verify login
+  // Assert successful login
   await expect(page.getByText('Login Successful')).toBeVisible();
 });

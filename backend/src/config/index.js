@@ -21,6 +21,7 @@ require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
  * @property {string}  uploadsDir           - Root directory for generated artifacts.
  * @property {string}  logLevel             - Logging verbosity (debug | info | warn | error).
  * @property {string}  logDir               - Directory for log file output.
+ * @property {string}  mongoUri             - MongoDB connection string.
  */
 
 /** @type {AppConfig} */
@@ -53,6 +54,8 @@ const config = Object.freeze({
     '../..',
     process.env.LOG_DIR || 'uploads/logs',
   ),
+
+  mongoUri: process.env.MONGODB_URI,
 });
 
 module.exports = config;

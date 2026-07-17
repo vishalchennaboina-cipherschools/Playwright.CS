@@ -10,22 +10,13 @@
  */
 
 const path = require('node:path');
+const fs = require('node:fs');
 const { nanoid } = require('nanoid');
 const config = require('../config');
 const { ARTIFACT_TYPES, EXT_TO_ARTIFACT } = require('../utils/constants');
 const { listFilesRecursive, copyArtifact, ensureDir, getFileSize, formatFileSize, pathExists } = require('../utils/fileHelper');
 const logger = require('../utils/logger');
-
-// ── In-memory artifact registries ────────────────────────────────────────────
-
-/** @type {Object[]} */
-const reports = [];
-/** @type {Object[]} */
-const screenshots = [];
-/** @type {Object[]} */
-const videos = [];
-/** @type {Object[]} */
-const traces = [];
+const Artifact = require('../models/Artifact');
 
 // ── Directory mappings ───────────────────────────────────────────────────────
 
@@ -134,6 +125,7 @@ async function registerArtifact(srcPath, type, execId, suite, environment, statu
   const metadata = {
     id: `${type[0]}${nanoid(5)}`,
     execId,
+    type,
     test: testName,
     url,
     takenAt: now,
@@ -141,87 +133,137 @@ async function registerArtifact(srcPath, type, execId, suite, environment, statu
 
   switch (type) {
     case ARTIFACT_TYPES.REPORT:
-      reports.push({
-        ...metadata,
-        suite,
-        environment,
-        status,
-        generatedAt: now,
-        sizeMB: (size / (1024 * 1024)).toFixed(2),
-      });
+      metadata.suite = suite;
+      metadata.environment = environment;
+      metadata.status = status;
+      metadata.generatedAt = now;
+      metadata.sizeMB = (size / (1024 * 1024)).toFixed(2);
       break;
-
-    case ARTIFACT_TYPES.SCREENSHOT:
-      screenshots.push(metadata);
-      break;
-
     case ARTIFACT_TYPES.VIDEO:
-      videos.push({
-        ...metadata,
-        duration: '', // Duration detection would require ffprobe — left as future enhancement.
-      });
+      metadata.duration = ''; // Duration detection would require ffprobe — left as future enhancement.
       break;
-
     case ARTIFACT_TYPES.TRACE:
-      traces.push({
-        ...metadata,
-        size: formatFileSize(size),
-      });
+      metadata.size = formatFileSize(size);
       break;
   }
+
+  await Artifact.create(metadata);
 
   logger.debug(`[Artifacts] Registered ${type}: ${filename} for ${execId}`);
 }
 
 // ── Public accessors (return frontend-compatible arrays) ─────────────────────
 
+function formatArtifact(doc) {
+  const raw = typeof doc.toObject === 'function' ? doc.toObject() : doc;
+  // Strip mongoose internal fields and the 'type' field from response if necessary, 
+  // but keeping it is fine. The frontend might not care about 'type' or just ignores it.
+  return raw;
+}
+
 /**
  * List all registered reports.
- * @returns {Object[]}
+ * @returns {Promise<Object[]>}
  */
-function listReports() {
-  return reports.map((r) => ({ ...r }));
+async function listReports() {
+  const docs = await Artifact.find({ type: ARTIFACT_TYPES.REPORT }).sort({ takenAt: -1 }).lean().exec();
+  return docs.map(formatArtifact);
 }
 
 /**
  * List all registered screenshots.
- * @returns {Object[]}
+ * @returns {Promise<Object[]>}
  */
-function listScreenshots() {
-  return screenshots.map((s) => ({ ...s }));
+async function listScreenshots() {
+  const docs = await Artifact.find({ type: ARTIFACT_TYPES.SCREENSHOT }).sort({ takenAt: -1 }).lean().exec();
+  return docs.map(formatArtifact);
 }
 
 /**
  * List all registered videos.
- * @returns {Object[]}
+ * @returns {Promise<Object[]>}
  */
-function listVideos() {
-  return videos.map((v) => ({ ...v }));
+async function listVideos() {
+  const docs = await Artifact.find({ type: ARTIFACT_TYPES.VIDEO }).sort({ takenAt: -1 }).lean().exec();
+  return docs.map(formatArtifact);
 }
 
 /**
  * List all registered traces.
- * @returns {Object[]}
+ * @returns {Promise<Object[]>}
  */
-function listTraces() {
-  return traces.map((t) => ({ ...t }));
+async function listTraces() {
+  const docs = await Artifact.find({ type: ARTIFACT_TYPES.TRACE }).sort({ takenAt: -1 }).lean().exec();
+  return docs.map(formatArtifact);
+}
+
+/**
+ * Remove an artifact from DB and filesystem.
+ */
+async function removeArtifact(artifact) {
+  try {
+    // Delete from DB
+    await Artifact.deleteOne({ id: artifact.id }).exec();
+    
+    // Delete file from disk
+    const typeDir = UPLOAD_DIRS[artifact.type];
+    if (typeDir && artifact.url) {
+      const filename = path.basename(artifact.url);
+      const filePath = path.join(typeDir, filename);
+      if (await pathExists(filePath)) {
+        await fs.promises.unlink(filePath);
+      }
+    }
+  } catch (err) {
+    logger.error(`[Artifacts] Failed to remove artifact ${artifact.id}`, err);
+  }
 }
 
 /**
  * Remove all artifacts associated with an execution ID.
  *
  * @param {string} execId
+ * @returns {Promise<number>} Number of artifacts removed
  */
-function removeByExecId(execId) {
-  const filter = (arr) => {
-    for (let i = arr.length - 1; i >= 0; i--) {
-      if (arr[i].execId === execId) arr.splice(i, 1);
-    }
-  };
-  filter(reports);
-  filter(screenshots);
-  filter(videos);
-  filter(traces);
+async function removeByExecId(execId) {
+  const artifacts = await Artifact.find({ execId }).lean().exec();
+  let count = 0;
+  for (const artifact of artifacts) {
+    await removeArtifact(artifact);
+    count++;
+  }
+  return count;
+}
+
+/**
+ * Remove all artifacts associated with multiple execution IDs.
+ *
+ * @param {string[]} execIds
+ * @returns {Promise<number>}
+ */
+async function removeByExecIds(execIds) {
+  const artifacts = await Artifact.find({ execId: { $in: execIds } }).lean().exec();
+  let count = 0;
+  for (const artifact of artifacts) {
+    await removeArtifact(artifact);
+    count++;
+  }
+  return count;
+}
+
+/**
+ * Remove all artifacts.
+ *
+ * @returns {Promise<number>}
+ */
+async function removeAll() {
+  const artifacts = await Artifact.find({}).lean().exec();
+  let count = 0;
+  for (const artifact of artifacts) {
+    await removeArtifact(artifact);
+    count++;
+  }
+  return count;
 }
 
 module.exports = {
@@ -231,4 +273,6 @@ module.exports = {
   listVideos,
   listTraces,
   removeByExecId,
+  removeByExecIds,
+  removeAll,
 };
