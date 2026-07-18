@@ -30,7 +30,7 @@ const config = Object.freeze({
   logDir: path.resolve(
     __dirname,
     '../..',
-    process.env.LOG_DIR || 'logs',
+    process.env.LOG_DIR || 'uploads/logs',
   ),
 
   logToFile: process.env.LOG_TO_FILE !== 'false',
