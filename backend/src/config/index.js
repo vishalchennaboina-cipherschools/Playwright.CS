@@ -39,13 +39,13 @@ const config = Object.freeze({
   mongoUri: process.env.MONGODB_URI,
 
   outputDir: path.join(
-    path.resolve(__dirname, '../..', process.env.PLAYWRIGHT_PROJECT_PATH || '../automation'), 
+    path.resolve(__dirname, '../..', process.env.UPLOADS_DIR || 'uploads'), 
     'test-results'
   ),
 
   reportDir: path.join(
-    path.resolve(__dirname, '../..', process.env.PLAYWRIGHT_PROJECT_PATH || '../automation'), 
-    'playwright-report'
+    path.resolve(__dirname, '../..', process.env.UPLOADS_DIR || 'uploads'), 
+    'reports'
   ),
 });
 
