@@ -67,8 +67,8 @@ async function buildCommand(execution) {
     }
   }
 
-  // Reporter - always include list for parseable stdout
-  args.push('--reporter=list');
+  // Reporter is already configured in playwright.config.js (both html and list)
+  // We do not override it here via CLI, otherwise the html report won't generate.
 
   return { command, args, cwd };
 }

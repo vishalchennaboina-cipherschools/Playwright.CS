@@ -21,6 +21,8 @@ function createSecurityMiddleware() {
       crossOriginResourcePolicy: { policy: 'cross-origin' },
       // Disable CSP for now — the backend is an API, not serving HTML pages
       contentSecurityPolicy: false,
+      // Allow the frontend dashboard to iframe HTML reports
+      xFrameOptions: false,
     }),
   ];
 }

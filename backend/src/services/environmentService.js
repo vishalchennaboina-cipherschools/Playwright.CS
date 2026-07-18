@@ -7,6 +7,8 @@
  * @module services/environmentService
  */
 
+const path = require('node:path');
+const config = require('../config');
 const { resolveBaseUrl, getAllEnvironments } = require('../utils/environmentMapper');
 
 /**
@@ -51,8 +53,8 @@ function buildProcessEnv({ environment, execId }) {
     SLOW_MO:    process.env.SLOW_MO    || '0',
 
     // ── Output paths ───────────────────────────────────────────────────────
-    OUTPUT_DIR: process.env.OUTPUT_DIR || '/tmp/test-results',
-    REPORT_DIR: process.env.REPORT_DIR || '/tmp/playwright-report',
+    OUTPUT_DIR: path.join(config.outputDir, execId),
+    REPORT_DIR: path.join(config.reportDir, execId),
 
     // ── Parallelism ────────────────────────────────────────────────────────
     RETRIES: process.env.RETRIES || '0',
