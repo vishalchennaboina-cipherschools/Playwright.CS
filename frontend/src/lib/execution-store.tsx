@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { logger } from "./logger";
 import type { Execution, ExecStatus } from "./types";
 import { api, type StartPayload } from "./api";
 
@@ -132,7 +133,6 @@ export function ExecutionProvider({ children }: { children: ReactNode }) {
     }
   }, [refreshHistory]);
 
-  // Set up Socket.IO listeners
   useEffect(() => {
     import("./socket").then(({ getSocket }) => {
       const socket = getSocket();
@@ -184,13 +184,12 @@ export function ExecutionProvider({ children }: { children: ReactNode }) {
         socket.off("execution-completed");
         socket.off("execution-error");
       };
-    }).catch(console.error);
+    }).catch((error) => logger.error("Failed to load initial history", { error, category: logger.CATEGORIES.API }));
   }, [refreshHistory]);
 
   const start = useCallback(async (cfg: RunConfig) => {
     stopPolling();
     const startedAt = Date.now();
-    // Optimistic live entry while we wait for the backend to accept the run.
     const tempId = `pending_${Math.random().toString(36).slice(2, 8)}`;
     setLive({
       id: tempId, suite: cfg.suite, environment: cfg.environment, browser: cfg.browser,

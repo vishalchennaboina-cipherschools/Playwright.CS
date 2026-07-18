@@ -1,11 +1,4 @@
-/**
- * @fileoverview Execution controller.
- *
- * Thin controller layer - validates, delegates to services, returns responses.
- * No business logic lives here.
- *
- * @module controllers/execution.controller
- */
+/** Handles execution endpoints. */
 
 const executionStore = require('../services/executionStore');
 const historyService = require('../services/historyService');
@@ -15,13 +8,10 @@ const { createExecution } = require('../utils/executionHelper');
 const { sendSuccess, sendOk, sendError } = require('../utils/responseHelper');
 const logger = require('../utils/logger');
 
-/**
- * POST /api/executions
- * Start a new Playwright execution.
- */
+/** Starts a new Playwright execution. */
 async function startExecution(req, res, next) {
   try {
-    const { suite, environment, browser, mode, workers, specFile } = req.body;
+    const { suite, environment, browser, mode, workers, specFile, email, password, customUrl, profile } = req.body;
 
     const execution = createExecution({
       suite,
@@ -30,9 +20,16 @@ async function startExecution(req, res, next) {
       mode,
       workers,
       specFile,
+      email:     email     || '',
+      profile:   profile   || '',
+      customUrl: customUrl || '',
     });
 
     await executionStore.create(execution);
+
+    /** Attaches runtime password transiently for the runner. */
+    execution._runtimePassword = password || '';
+
     playwrightRunner.spawnExecution(execution);
 
     logger.info(`[Controller] Started execution ${execution.id}`);
@@ -42,32 +39,25 @@ async function startExecution(req, res, next) {
   }
 }
 
-/**
- * GET /api/executions
- * List all executions (live + history merged, newest first).
- */
+/** Lists all executions. */
 async function listExecutions(_req, res, next) {
   try {
-    // Merge live executions with history, deduplicating by ID.
     const live = await executionStore.getAll();
     const history = await historyService.list();
     const seen = new Set();
     const merged = [];
 
-    // Live/persisted execution entries first (they have more detailed data).
     for (const exec of live) {
       seen.add(exec.id);
       merged.push(exec);
     }
 
-    // Then history entries not already in live.
     for (const exec of history) {
       if (!seen.has(exec.id)) {
         merged.push(exec);
       }
     }
 
-    // Sort newest first.
     merged.sort((a, b) => new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime());
 
     sendSuccess(res, merged);
@@ -76,19 +66,14 @@ async function listExecutions(_req, res, next) {
   }
 }
 
-/**
- * GET /api/executions/:id
- * Get a single execution's full detail (for live polling).
- */
+/** Retrieves a single execution's full detail. */
 async function getExecution(req, res, next) {
   try {
     const { id } = req.params;
 
-    // Check execution store first (live cache, then MongoDB).
     const live = await executionStore.get(id);
     if (live) return sendSuccess(res, live);
 
-    // Fall back to history.
     const hist = await historyService.getById(id);
     if (hist) return sendSuccess(res, hist);
 
@@ -98,10 +83,7 @@ async function getExecution(req, res, next) {
   }
 }
 
-/**
- * POST /api/executions/:id/stop
- * Stop a running execution.
- */
+/** Stops a running execution. */
 async function stopExecution(req, res, next) {
   try {
     const { id } = req.params;
@@ -124,10 +106,7 @@ async function stopExecution(req, res, next) {
   }
 }
 
-/**
- * DELETE /api/executions/:id
- * Delete a single execution from store, history, and artifacts.
- */
+/** Deletes a single execution from store, history, and artifacts. */
 async function deleteExecution(req, res, next) {
   try {
     const { id } = req.params;
@@ -150,22 +129,15 @@ async function deleteExecution(req, res, next) {
   }
 }
 
-/**
- * DELETE /api/executions
- * Batch delete executions or delete all.
- * Expects ?all=true OR { ids: ['id1', 'id2'] }
- */
+/** Batch deletes executions. */
 async function deleteExecutions(req, res, next) {
   try {
     const { all } = req.query;
     const { ids } = req.body;
 
     if (all === 'true') {
-      // Clear live store entirely
       await executionStore.clear();
-      // Clear history
       const count = await historyService.removeAll();
-      // Clear artifacts
       await artifactScanner.removeAll();
 
       logger.info(`[Controller] Deleted all historical executions`);

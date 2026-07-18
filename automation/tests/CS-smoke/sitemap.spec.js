@@ -1,7 +1,8 @@
 // @ts-check
 // tests/CS-smoke/sitemap.spec.js
 
-const { test } = require('@playwright/test');
+const { test, expect } = require('@playwright/test');
+const logger = require('../../utils/logger');
 const { getFullSitemapUrls } = require('../../config/sitemap.config');
 const config = require('../../config/test.config');
 const { BasePage } = require('../../pages/BasePage');
@@ -25,15 +26,15 @@ test.describe('Sitemap validation tests', () => {
       try {
         const parsed = new URL(url);
         if (!/^https?:$/.test(parsed.protocol)) {
-          console.warn(`Skipping non-http URL: ${url}`);
+          logger.warn(`Skipping non-http URL: ${url}`);
           continue;
         }
       } catch {
-        console.warn(`Invalid URL, skipping: ${url}`);
+        logger.warn(`Invalid URL, skipping: ${url}`);
         continue;
       }
 
-      console.log(`Visiting: ${url}`);
+      logger.info(`Visiting: ${url}`);
       try {
         await page.goto(url, {
           waitUntil: 'domcontentloaded',
@@ -41,7 +42,7 @@ test.describe('Sitemap validation tests', () => {
         });
       } catch (err) {
         const msg = err instanceof Error ? err.message : String(err);
-        console.error(`Navigation failed for ${url}: ${msg}`);
+        logger.error(`Navigation failed for ${url}: ${msg}`);
         continue;
       }
 

@@ -1,14 +1,4 @@
-/**
- * @fileoverview Artifact routes.
- *
- * Maps artifact listing endpoints to controller methods.
- * Each endpoint returns an array of metadata objects with
- * relative URLs pointing to the static /uploads directory.
- *
- * Mounts at: /api
- *
- * @module routes/artifact.routes
- */
+/** Maps artifact listing endpoints to controller methods. */
 
 const { Router } = require('express');
 const ctrl = require('../controllers/artifact.controller');

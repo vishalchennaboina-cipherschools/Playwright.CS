@@ -1,10 +1,4 @@
-/**
- * @fileoverview Artifact model.
- *
- * Stores metadata about generated artifacts (reports, screenshots, videos, traces).
- *
- * @module models/Artifact
- */
+/** Stores artifact metadata. */
 
 const mongoose = require('mongoose');
 
@@ -22,12 +16,11 @@ const artifactSchema = new mongoose.Schema(
     url: { type: String, required: true, trim: true },
     takenAt: { type: String, required: true },
     
-    // Type-specific optional fields
     suite: { type: String, trim: true },
     environment: { type: String, trim: true },
     status: { type: String, trim: true },
     generatedAt: { type: String },
-    sizeMB: { type: mongoose.Schema.Types.Mixed }, // String or Number
+    sizeMB: { type: mongoose.Schema.Types.Mixed },
     duration: { type: String },
     size: { type: String },
   },

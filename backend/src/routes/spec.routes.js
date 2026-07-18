@@ -1,29 +1,15 @@
-/**
- * @fileoverview Spec discovery routes.
- *
- * Mounts at: /api
- *
- * @module routes/spec.routes
- */
-
-// const { Router } = require('express');
-// const ctrl = require('../controllers/spec.controller');
-
-// const router = Router();
-
-// router.get('/specs', ctrl.listSpecs);
-
-// module.exports = router;
+/** Maps spec discovery routes. */
 
 const { Router } = require('express');
 const ctrl = require('../controllers/spec.controller');
+const logger = require('../utils/logger');
 
 const router = Router();
 
-console.log('[Routes] spec.routes loaded');
+logger.debug('[Routes] spec.routes loaded', { category: logger.CATEGORIES.API });
 
 router.get('/specs', (req, res, next) => {
-    console.log('[Routes] GET /api/specs');
+    logger.debug('[Routes] GET /api/specs', { category: logger.CATEGORIES.API });
     next();
 }, ctrl.listSpecs);
 

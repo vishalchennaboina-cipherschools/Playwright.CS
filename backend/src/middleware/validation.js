@@ -1,32 +1,16 @@
-/**
- * @fileoverview Request body validation middleware.
- *
- * Provides lightweight validation for incoming payloads
- * without external schema libraries (keeping deps minimal).
- * When a richer solution is needed, swap in Joi or Zod.
- *
- * @module middleware/validation
- */
+/** Validates incoming payloads. */
 
 const { BROWSERS, MODES } = require('../utils/constants');
 
-/**
- * Validate the POST /api/executions request body.
- *
- * @param {import('express').Request}      req
- * @param {import('express').Response}     res
- * @param {import('express').NextFunction} next
- */
+/** Validates the execution request body. */
 function validateStartExecution(req, res, next) {
   const { suite, environment, browser, mode, workers } = req.body;
   const errors = [];
 
-  // Suite is now dynamic (folder name from spec discovery) — just needs to be non-empty.
   if (!suite || typeof suite !== 'string' || suite.trim().length === 0) {
     errors.push('Suite (test folder) is required.');
   }
 
-  // Environment is dynamic (user-configurable) — just needs to be non-empty.
   if (!environment || typeof environment !== 'string' || environment.trim().length === 0) {
     errors.push('Environment is required.');
   }
@@ -48,18 +32,11 @@ function validateStartExecution(req, res, next) {
     return res.status(400).json({ error: 'Validation failed', details: errors });
   }
 
-  // Normalise workers to a number for downstream consumers.
   req.body.workers = w;
   next();
 }
 
-/**
- * Validate that :id param is a non-empty string.
- *
- * @param {import('express').Request}      req
- * @param {import('express').Response}     res
- * @param {import('express').NextFunction} next
- */
+/** Validates the execution ID parameter. */
 function validateExecId(req, res, next) {
   const { id } = req.params;
   if (!id || typeof id !== 'string' || id.trim().length === 0) {

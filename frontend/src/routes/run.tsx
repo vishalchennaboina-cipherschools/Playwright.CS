@@ -1,17 +1,26 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Play, Square, Rocket, Globe, Chrome, Cpu, Layers, FileCode, Terminal, CheckCircle2, XCircle, Circle, Download, Loader2 } from "lucide-react";
+import {
+  Play, Square, Rocket, Globe, Chrome, Cpu, Layers, FileCode, Terminal,
+  CheckCircle2, XCircle, Circle, Download, Loader2, User, Lock, Link2,
+  BookMarked, AlertTriangle, Info,
+} from "lucide-react";
 import { PageHeader, StatusPill, formatDuration } from "@/components/dashboard-ui";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { logger } from "@/lib/logger";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { api, type SpecTree } from "@/lib/api";
+import { api, type SpecTree, type ExecutionProfile } from "@/lib/api";
 import { useExecution, type RunConfig } from "@/lib/execution-store";
 import { cn } from "@/lib/utils";
+
+
 
 export const Route = createFileRoute("/run")({
   head: () => ({
@@ -30,6 +39,7 @@ function RunPage() {
   const [specTree, setSpecTree] = useState<SpecTree | null>(null);
   const [specsLoading, setSpecsLoading] = useState(true);
   const [envUrls, setEnvUrls] = useState<Record<string, string>>({});
+  const [profiles, setProfiles] = useState<ExecutionProfile[]>([]);
 
   // Form state
   const [suite, setSuite] = useState<string>("");
@@ -39,20 +49,34 @@ function RunPage() {
   const [workers, setWorkers] = useState<string>("4");
   const [specFile, setSpecFile] = useState<string>("all");
 
-  // Fetch specs and settings from backend
+  // Runtime credentials (never cached — cleared after run)
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
+  // Custom URL
+  const [useCustomUrl, setUseCustomUrl] = useState<boolean>(false);
+  const [customUrl, setCustomUrl] = useState<string>("");
+  const [customUrlError, setCustomUrlError] = useState<string>("");
+
+  // Active profile
+  const [selectedProfile, setSelectedProfile] = useState<string>("none");
+
+  // Fetch specs, settings, and profiles from backend
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
       setSpecsLoading(true);
       try {
-        const [specs, settings] = await Promise.all([
+        const [specs, settings, profileList] = await Promise.all([
           api.listSpecs(),
           api.getSettings(),
+          api.listProfiles(),
         ]);
         if (cancelled) return;
         setSpecTree(specs);
         setEnvUrls(settings.environments || {});
+        setProfiles(profileList);
 
         // Set defaults from first available values
         if (specs.folders.length > 0 && !suite) {
@@ -63,7 +87,7 @@ function RunPage() {
           setEnvironment(envNames[0]);
         }
       } catch (e) {
-        console.error("Failed to load specs/settings:", e);
+        logger.error("Failed to load specs/settings:", { error: e, category: logger.CATEGORIES.UI });
         toast.error("Failed to load configuration", {
           description: e instanceof Error ? e.message : "Check backend connection",
         });
@@ -76,6 +100,31 @@ function RunPage() {
     return () => { cancelled = true; };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Apply profile defaults when a profile is selected
+  useEffect(() => {
+    if (selectedProfile === "none") return;
+    const p = profiles.find((pr) => pr._id === selectedProfile);
+    if (!p) return;
+    if (p.email) setEmail(p.email);
+    if (p.defaultEnvironment) setEnvironment(p.defaultEnvironment);
+    if (p.defaultBrowser) setBrowser(p.defaultBrowser);
+    if (p.defaultWorkers) setWorkers(String(p.defaultWorkers));
+    if (p.defaultMode) setMode(p.defaultMode);
+    if (p.defaultFolder) { setSuite(p.defaultFolder); setSpecFile("all"); }
+    if (p.defaultSpec) setSpecFile(p.defaultSpec);
+  }, [selectedProfile, profiles]);
+
+  // Validate custom URL whenever it changes
+  useEffect(() => {
+    if (!useCustomUrl || !customUrl) { setCustomUrlError(""); return; }
+    try {
+      new URL(customUrl);
+      setCustomUrlError("");
+    } catch {
+      setCustomUrlError("Enter a valid URL (e.g. https://qa.example.com)");
+    }
+  }, [customUrl, useCustomUrl]);
+
   const files = useMemo(() => {
     if (!specTree) return [];
     const folder = specTree.folders.find((f) => f.name === suite);
@@ -84,14 +133,33 @@ function RunPage() {
 
   const elapsed = useElapsed(live?.startedAt ?? null, isRunning);
 
+  const activeProfile = profiles.find((p) => p._id === selectedProfile);
+
+  // Determine resolved base URL for summary
+  const resolvedUrl = useCustomUrl && customUrl ? customUrl : (envUrls[environment] || "");
+
+  // Run is valid if required fields present and no URL validation error
+  const canRun = !!suite && !!environment && !customUrlError && (!useCustomUrl || !!customUrl);
+
   const onRun = async () => {
     const cfg: RunConfig = {
-      suite, environment, browser, mode, workers: Number(workers),
+      suite,
+      environment,
+      browser,
+      mode,
+      workers: Number(workers),
       specFile: specFile === "all" ? undefined : specFile,
+      email: email || undefined,
+      // password is passed once and never stored anywhere on the client
+      password: password || undefined,
+      customUrl: useCustomUrl && customUrl ? customUrl : undefined,
+      profile: activeProfile?.name || undefined,
     };
     try {
       await start(cfg);
-      toast.success("Automation started", { description: `${suite} · ${browser} · ${environment}` });
+      toast.success("Automation started", { description: `${suite} · ${browser} · ${useCustomUrl ? customUrl : environment}` });
+      // Clear password immediately after dispatch — it must not linger in state
+      setPassword("");
     } catch (e) {
       toast.error("Failed to start execution", {
         description: e instanceof Error ? e.message : "Check backend URL in Settings",
@@ -122,14 +190,69 @@ function RunPage() {
             </div>
           ) : (
             <div className="space-y-5">
-              <Field icon={<Globe className="h-3.5 w-3.5" />} label="Environment" hint={envUrls[environment] || ""}>
-                <Select value={environment} onValueChange={setEnvironment} disabled={isRunning || envNames.length === 0}>
-                  <SelectTrigger><SelectValue placeholder="Select environment" /></SelectTrigger>
-                  <SelectContent>
-                    {envNames.map((e) => <SelectItem key={e} value={e}>{e}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-              </Field>
+              {/* Execution Profile */}
+              {profiles.length > 0 && (
+                <Field icon={<BookMarked className="h-3.5 w-3.5" />} label="Execution Profile" hint="Auto-fills form fields">
+                  <Select value={selectedProfile} onValueChange={setSelectedProfile} disabled={isRunning}>
+                    <SelectTrigger><SelectValue placeholder="Select a profile (optional)" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">— No profile —</SelectItem>
+                      {profiles.map((p) => (
+                        <SelectItem key={p._id} value={p._id}>{p.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </Field>
+              )}
+
+              {/* Environment / Custom URL */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                    <Globe className="h-3.5 w-3.5" />Environment
+                  </Label>
+                  <label className="flex cursor-pointer items-center gap-1.5 text-[10px] text-muted-foreground">
+                    <input
+                      type="checkbox"
+                      id="use-custom-url"
+                      checked={useCustomUrl}
+                      onChange={(e) => setUseCustomUrl(e.target.checked)}
+                      disabled={isRunning}
+                      className="h-3 w-3 accent-primary"
+                    />
+                    <Link2 className="h-3 w-3" /> Use custom URL
+                  </label>
+                </div>
+
+                {useCustomUrl ? (
+                  <div className="space-y-1">
+                    <Input
+                      id="custom-url-input"
+                      placeholder="https://custom.example.com"
+                      value={customUrl}
+                      onChange={(e) => setCustomUrl(e.target.value)}
+                      disabled={isRunning}
+                      className={cn("font-mono text-xs", customUrlError && "border-destructive")}
+                    />
+                    {customUrlError && (
+                      <p className="flex items-center gap-1 text-[10px] text-destructive">
+                        <AlertTriangle className="h-3 w-3" />{customUrlError}
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <Select value={environment} onValueChange={setEnvironment} disabled={isRunning || envNames.length === 0}>
+                    <SelectTrigger><SelectValue placeholder="Select environment" /></SelectTrigger>
+                    <SelectContent>
+                      {envNames.map((e) => (
+                        <SelectItem key={e} value={e}>
+                          {e} <span className="ml-1 font-mono text-[10px] text-muted-foreground/70">{envUrls[e]}</span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              </div>
 
               <Field icon={<Chrome className="h-3.5 w-3.5" />} label="Browser">
                 <Select value={browser} onValueChange={(v) => setBrowser(v as typeof browser)} disabled={isRunning}>
@@ -187,11 +310,53 @@ function RunPage() {
                 </Select>
               </Field>
 
+              {/* Runtime Credentials */}
+              <div className="rounded-md border border-border bg-secondary/30 p-3 space-y-3">
+                <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <Lock className="h-3.5 w-3.5" />Runtime Credentials
+                </div>
+                <p className="text-[10px] text-muted-foreground flex items-start gap-1">
+                  <Info className="h-3 w-3 mt-0.5 shrink-0" />
+                  Credentials are injected into the test process only. Passwords are never stored.
+                </p>
+                <div className="space-y-2">
+                  <div className="space-y-1">
+                    <Label className="text-[10px] uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                      <User className="h-3 w-3" /> Email
+                    </Label>
+                    <Input
+                      id="runtime-email"
+                      type="email"
+                      placeholder="test@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      disabled={isRunning}
+                      className="text-xs"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-[10px] uppercase tracking-wider text-muted-foreground flex items-center gap-1">
+                      <Lock className="h-3 w-3" /> Password
+                    </Label>
+                    <Input
+                      id="runtime-password"
+                      type="password"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      disabled={isRunning}
+                      className="text-xs"
+                      autoComplete="current-password"
+                    />
+                  </div>
+                </div>
+              </div>
+
               <div className="border-t border-border pt-4">
                 {!isRunning ? (
                   <Button
                     onClick={onRun} size="lg"
-                    disabled={!suite || !environment}
+                    disabled={!canRun}
                     className="group relative w-full gap-2 overflow-hidden bg-gradient-to-r from-primary to-accent text-primary-foreground glow-primary hover:opacity-95"
                   >
                     <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
@@ -207,8 +372,38 @@ function RunPage() {
           )}
         </div>
 
-        {/* Live panel */}
+        {/* Right column: Summary + Live panel */}
         <div className="space-y-4">
+          {/* Execution Summary */}
+          {!isRunning && !specsLoading && (
+            <div className="surface-card p-4">
+              <div className="mb-3 flex items-center gap-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                <Info className="h-3.5 w-3.5" /> Execution Summary
+              </div>
+              <div className="grid gap-1.5 text-xs">
+                {activeProfile && <KV k="Profile" v={<Badge variant="secondary" className="text-[10px] font-mono">{activeProfile.name}</Badge>} />}
+                <KV k="Environment" v={useCustomUrl ? <span className="font-mono text-[10px] text-warning">{customUrl || "—"} (custom)</span> : environment || "—"} />
+                <KV k="Base URL" v={<span className="font-mono text-[10px] truncate max-w-[200px]">{resolvedUrl || "—"}</span>} />
+                <KV k="Browser" v={browser} />
+                <KV k="Mode" v={mode} />
+                <KV k="Workers" v={`${workers} parallel`} />
+                <KV k="Folder" v={suite || "—"} />
+                <KV k="Spec" v={specFile === "all" ? "All files" : <span className="font-mono text-[10px]">{specFile}</span>} />
+                <KV k="Email" v={email ? <span className="font-mono text-[10px]">{email}</span> : <span className="text-muted-foreground/50">not set</span>} />
+                <KV k="Password" v={password ? <span className="text-success text-[10px]">✓ provided (not stored)</span> : <span className="text-muted-foreground/50">using .env fallback</span>} />
+              </div>
+              {canRun ? (
+                <div className="mt-3 flex items-center gap-1.5 text-[10px] text-success">
+                  <CheckCircle2 className="h-3 w-3" /> Ready to execute
+                </div>
+              ) : (
+                <div className="mt-3 flex items-center gap-1.5 text-[10px] text-warning">
+                  <AlertTriangle className="h-3 w-3" /> {!suite ? "Select a test folder" : !environment ? "Select an environment" : customUrlError || "Check configuration"}
+                </div>
+              )}
+            </div>
+          )}
+
           {live ? (
             <>
               <div className="surface-card p-5">
@@ -245,20 +440,24 @@ function RunPage() {
               <LiveConsole />
             </>
           ) : (
-            <div className="surface-card flex min-h-[420px] flex-col items-center justify-center gap-3 p-8 text-center">
-              <div className="grid h-14 w-14 place-items-center rounded-full bg-primary/10 text-primary">
-                <Rocket className="h-6 w-6" />
+            !specsLoading && (
+              <div className="surface-card flex min-h-[280px] flex-col items-center justify-center gap-3 p-8 text-center">
+                <div className="grid h-14 w-14 place-items-center rounded-full bg-primary/10 text-primary">
+                  <Rocket className="h-6 w-6" />
+                </div>
+                <h3 className="text-base font-semibold text-foreground">Ready to launch</h3>
+                <p className="max-w-sm text-sm text-muted-foreground">
+                  Configure the settings on the left, review the summary, then click <span className="text-primary">Run automation</span>.
+                </p>
+                <div className="mt-4 flex gap-2">
+                  <Link to="/history" className="text-xs text-primary hover:underline">Browse history</Link>
+                  <span className="text-xs text-muted-foreground">·</span>
+                  <Link to="/reports" className="text-xs text-primary hover:underline">Latest reports</Link>
+                  <span className="text-xs text-muted-foreground">·</span>
+                  <Link to="/profiles" className="text-xs text-primary hover:underline">Manage profiles</Link>
+                </div>
               </div>
-              <h3 className="text-base font-semibold text-foreground">Ready to launch</h3>
-              <p className="max-w-sm text-sm text-muted-foreground">
-                Configure the environment, browser and test folder on the left, then click <span className="text-primary">Run automation</span> to dispatch a Playwright execution.
-              </p>
-              <div className="mt-4 flex gap-2">
-                <Link to="/history" className="text-xs text-primary hover:underline">Browse history</Link>
-                <span className="text-xs text-muted-foreground">·</span>
-                <Link to="/reports" className="text-xs text-primary hover:underline">Latest reports</Link>
-              </div>
-            </div>
+            )
           )}
         </div>
       </div>

@@ -1,13 +1,5 @@
-/**
- * @fileoverview Application-wide constants.
- *
- * Centralises magic strings, enum-like values, and default settings
- * so they can be changed in one place and referenced everywhere.
- *
- * @module utils/constants
- */
+/** Application-wide constants. */
 
-/** Allowed execution statuses (matches frontend ExecStatus). */
 const EXEC_STATUS = Object.freeze({
   RUNNING: 'running',
   PASSED: 'passed',
@@ -16,39 +8,33 @@ const EXEC_STATUS = Object.freeze({
   ABORTED: 'aborted',
 });
 
-/** Allowed environment names. */
 const ENVIRONMENTS = Object.freeze({
   QA: 'QA',
   PRODUCTION: 'Production',
 });
 
-/** Environment → base URL mapping (matches frontend ENV_URLS). */
 const ENV_URLS = Object.freeze({
   QA: 'https://qa.cipherschools.com',
   Production: 'https://www.cipherschools.com',
 });
 
-/** Allowed browser names (matches frontend select). */
 const BROWSERS = Object.freeze({
   CHROME: 'Chrome',
   FIREFOX: 'Firefox',
   EDGE: 'Edge',
 });
 
-/** Browser name → Playwright project name mapping. */
 const BROWSER_PROJECT_MAP = Object.freeze({
   Chrome: 'chromium',
   Firefox: 'firefox',
   Edge: 'msedge',
 });
 
-/** Allowed execution modes. */
 const MODES = Object.freeze({
   HEADLESS: 'Headless',
   HEADED: 'Headed',
 });
 
-/** Test suite names (matches frontend SUITES). */
 const SUITES = Object.freeze([
   'Smoke',
   'Regression',
@@ -60,10 +46,6 @@ const SUITES = Object.freeze([
   'Full Regression',
 ]);
 
-/**
- * Suite → spec file mapping.
- * Mirrors `suiteFilesFor()` in the frontend's mock-data.ts.
- */
 const SUITE_FILES = Object.freeze({
   Smoke: ['tests/smoke/home.spec.js', 'tests/smoke/nav.spec.js'],
   Regression: ['tests/regression/checkout.spec.js', 'tests/regression/profile.spec.js'],
@@ -75,7 +57,6 @@ const SUITE_FILES = Object.freeze({
   'Full Regression': ['tests/**/*.spec.js'],
 });
 
-/** Log levels with numeric priority (lower = more verbose). */
 const LOG_LEVELS = Object.freeze({
   DEBUG: 0,
   INFO: 1,
@@ -84,7 +65,6 @@ const LOG_LEVELS = Object.freeze({
   SUCCESS: 4,
 });
 
-/** Socket.IO event names. */
 const SOCKET_EVENTS = Object.freeze({
   EXECUTION_STARTED: 'execution-started',
   EXECUTION_PROGRESS: 'execution-progress',
@@ -97,7 +77,6 @@ const SOCKET_EVENTS = Object.freeze({
   EXECUTION_ERROR: 'execution-error',
 });
 
-/** Artifact type classifiers. */
 const ARTIFACT_TYPES = Object.freeze({
   REPORT: 'report',
   SCREENSHOT: 'screenshot',
@@ -106,7 +85,6 @@ const ARTIFACT_TYPES = Object.freeze({
   LOG: 'log',
 });
 
-/** File extensions → artifact type. */
 const EXT_TO_ARTIFACT = Object.freeze({
   '.html': ARTIFACT_TYPES.REPORT,
   '.png': ARTIFACT_TYPES.SCREENSHOT,
@@ -119,7 +97,6 @@ const EXT_TO_ARTIFACT = Object.freeze({
   '.txt': ARTIFACT_TYPES.LOG,
 });
 
-/** Default polling interval match (frontend polls at 1200ms). */
 const POLL_INTERVAL_MS = 1200;
 
 module.exports = {

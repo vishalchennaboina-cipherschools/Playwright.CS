@@ -1,26 +1,11 @@
-/**
- * @fileoverview Dynamic spec file discovery service.
- *
- * Recursively scans the Playwright framework's tests/ directory
- * for *.spec.js files and returns a tree structure that the
- * frontend uses to populate the Test Folder and Spec File dropdowns.
- *
- * No hardcoded suite lists — specs are discovered at runtime.
- *
- * @module services/specDiscovery
- */
+/** Recursively scans Playwright tests directory for spec files. */
 
 const path = require('node:path');
 const config = require('../config');
 const { listFilesRecursive, pathExists } = require('../utils/fileHelper');
 const logger = require('../utils/logger');
 
-/**
- * Scan the Playwright framework's tests/ directory and return
- * a structured spec tree.
- *
- * @returns {Promise<{ folders: Array<{ name: string, path: string, files: Array<{ name: string, relativePath: string }> }>, totalFiles: number }>}
- */
+/** Scans the Playwright tests directory and returns a structured spec tree. */
 async function discoverSpecs() {
   const testsDir = path.join(config.playwrightProjectPath, 'tests');
 
@@ -32,12 +17,10 @@ async function discoverSpecs() {
 
   const allFiles = await listFilesRecursive(testsDir);
 
-  // Filter to *.spec.js files only
   const specFiles = allFiles.filter((f) => /\.spec\.(js|ts|mjs)$/i.test(f));
 
   logger.info(`[SpecDiscovery] Found ${specFiles.length} spec files in ${testsDir}`);
 
-  // Group by immediate parent folder relative to tests/
   const folderMap = new Map();
 
   for (const absPath of specFiles) {
@@ -48,11 +31,9 @@ async function discoverSpecs() {
     let folderPath;
 
     if (parts.length === 1) {
-      // File is directly in tests/ (no subfolder)
       folderName = 'root';
       folderPath = 'tests';
     } else {
-      // File is in tests/<subfolder>/...
       folderName = parts[0];
       folderPath = `tests/${parts[0]}`;
     }
@@ -71,7 +52,6 @@ async function discoverSpecs() {
     });
   }
 
-  // Sort folders and files alphabetically
   const folders = Array.from(folderMap.values()).sort((a, b) =>
     a.name.localeCompare(b.name),
   );

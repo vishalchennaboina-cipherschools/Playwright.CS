@@ -1,20 +1,10 @@
-/**
- * @fileoverview Spec discovery controller.
- *
- * Returns the dynamically discovered spec tree from the
- * Playwright framework's tests/ directory.
- *
- * @module controllers/spec.controller
- */
+/** Handles dynamic spec discovery. */
 
 const specDiscovery = require('../services/specDiscovery');
 const { sendSuccess } = require('../utils/responseHelper');
 const logger = require('../utils/logger');
 
-/**
- * GET /api/specs
- * Return the full spec tree (folders + files).
- */
+/** Returns the full spec tree. */
 async function listSpecs(_req, res) {
   try {
     const tree = await specDiscovery.discoverSpecs();

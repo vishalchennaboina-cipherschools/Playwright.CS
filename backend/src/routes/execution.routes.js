@@ -1,13 +1,4 @@
-/**
- * @fileoverview Execution routes.
- *
- * Maps HTTP verbs to execution controller methods.
- * Validation middleware is applied per-route.
- *
- * Mounts at: /api/executions
- *
- * @module routes/execution.routes
- */
+/** Maps HTTP verbs to execution controller methods. */
 
 const { Router } = require('express');
 const ctrl = require('../controllers/execution.controller');

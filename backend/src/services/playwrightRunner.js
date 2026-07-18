@@ -1,13 +1,4 @@
-/**
- * @fileoverview Playwright test runner service.
- *
- * Builds Playwright commands, spawns child processes, parses stdout/stderr,
- * tracks execution progress, and updates the execution store in real time.
- *
- * This service NEVER modifies the Playwright framework - it only executes it.
- *
- * @module services/playwrightRunner
- */
+/** Executes Playwright tests. */
 
 const { spawn } = require('node:child_process');
 const path = require('node:path');
@@ -22,39 +13,26 @@ const { calcDuration } = require('../utils/durationFormatter');
 const { buildProcessEnv } = require('./environmentService');
 const logger = require('../utils/logger');
 
-/**
- * Map of active child processes.
- * @type {Map<string, import('child_process').ChildProcess>}
- */
 const activeProcesses = new Map();
 
-/**
- * Build the Playwright CLI command and arguments.
- *
- * @param {Object} execution - The execution detail object.
- * @returns {Promise<{ command: string, args: string[], cwd: string }>}
- */
+/** Builds the Playwright CLI command and arguments. */
 async function buildCommand(execution) {
   const cwd = config.playwrightProjectPath;
   const command = path.join(cwd, 'node_modules', '.bin', process.platform === 'win32' ? 'playwright.cmd' : 'playwright');
   const args = ['test'];
 
-  // Spec files (now resolved dynamically)
   const files = await resolveSpecFiles(execution.suite, execution.specFile);
   if (files.length > 0 && !files.includes('tests/**/*.spec.js')) {
     args.push(...files);
   }
 
-  // Browser project
   const project = BROWSER_PROJECT_MAP[execution.browser];
   if (project) {
     args.push(`--project=${project}`);
   }
 
-  // Workers
   args.push(`--workers=${execution.workers}`);
 
-  // Headed mode
   const allowHeaded = process.env.PLAYWRIGHT_HEADED === 'true';
 
   if (execution.mode === 'Headed') {
@@ -67,34 +45,16 @@ async function buildCommand(execution) {
     }
   }
 
-  // Reporter is already configured in playwright.config.js (both html and list)
-  // We do not override it here via CLI, otherwise the html report won't generate.
-
   return { command, args, cwd };
 }
 
-/**
- * Parse a Playwright stdout line and extract progress information.
- *
- * Playwright list reporter format examples:
- *   "  checkmark  1 [chromium] > tests/auth/login.spec.js:12 > user can log in (812ms)"
- *   "  fail mark  2 [chromium] > tests/auth/login.spec.js:12 > user can log in (812ms)"
- *   "  -  3 [chromium] > tests/auth/login.spec.js:12 > user can log in"
- *   "  4 passed"
- *   "  1 failed"
- *   "  2 skipped"
- *
- * @param {string} line     - Raw stdout line.
- * @param {Object} execution - Current execution state (mutated in-place).
- * @returns {{ shouldUpdate: boolean, logLine: Object }}
- */
+/** Parses a Playwright stdout line and extracts progress information. */
 function parseLine(line, execution) {
   const trimmed = line.trim();
   if (!trimmed) return { shouldUpdate: false, logLine: null };
 
   const logLine = createLogLine(trimmed, detectLogLevel(trimmed));
 
-  // Detect spec file + test name: "[chromium] > path/to/spec.js:N > test name"
   const specMatch = trimmed.match(/\[[\w-]+\]\s+(?:\u203a|>)\s+(.+?):(\d+)\s+(?:\u203a|>)\s+(.+?)(?:\s+\(|$)/);
   if (specMatch) {
     execution.currentFile = specMatch[1];
@@ -102,24 +62,20 @@ function parseLine(line, execution) {
     execution.currentStep = 'running';
   }
 
-  // Detect pass: checkmark or square root symbol.
   if (/\u2713|\u221a/.test(trimmed)) {
     execution.passed += 1;
     logLine.level = 'pass';
   }
 
-  // Detect fail: common cross/fail symbols.
   if (/\u2717|\u00d7|\u2718/.test(trimmed)) {
     execution.failed += 1;
     logLine.level = 'fail';
   }
 
-  // Detect skip: starts with "-" followed by number, or "skipped"
   if (/^\s*-\s+\d+/.test(trimmed) || /skipped/i.test(trimmed)) {
     execution.skipped += 1;
   }
 
-  // Detect summary line: "N passed", "N failed", "N skipped" at end
   const summaryMatch = trimmed.match(/(\d+)\s+passed/);
   if (summaryMatch) {
     execution.passed = parseInt(summaryMatch[1], 10);
@@ -133,13 +89,11 @@ function parseLine(line, execution) {
     execution.skipped = parseInt(skipMatch[1], 10);
   }
 
-  // Detect total planned: "Running N tests using N workers"
   const totalMatch = trimmed.match(/Running\s+(\d+)\s+tests?/i);
   if (totalMatch) {
     execution.totalPlanned = parseInt(totalMatch[1], 10);
   }
 
-  // Calculate progress
   const completed = execution.passed + execution.failed + execution.skipped;
   if (execution.totalPlanned > 0) {
     execution.progress = Math.min(100, Math.round((completed / execution.totalPlanned) * 100));
@@ -148,24 +102,19 @@ function parseLine(line, execution) {
   return { shouldUpdate: true, logLine };
 }
 
-/**
- * Spawn a Playwright test execution.
- *
- * This function is non-blocking - it starts the child process and returns
- * immediately. Progress is tracked via stdout parsing and store updates.
- *
- * @param {Object} execution - Full ExecutionDetail object (already in store).
- */
+/** Spawns a Playwright test execution. */
 async function spawnExecution(execution) {
   const { command, args, cwd } = await buildCommand(execution);
   const envVars = buildProcessEnv({
     environment: execution.environment,
     execId: execution.id,
+    email:     execution.email     || undefined,
+    password:  execution._runtimePassword || undefined,
+    customUrl: execution.customUrl  || undefined,
   });
 
   logger.info(`[Runner] Spawning: ${command} ${args.join(' ')}`, { cwd, env: envVars });
 
-  // Add initial log
   const initLog = createLogLine(
     `-> ${command} ${args.join(' ')}`,
     'info',
@@ -214,7 +163,6 @@ async function spawnExecution(execution) {
 
   activeProcesses.set(execution.id, child);
 
-  // stdout handler
   child.stdout.on('data', async (data) => {
     const lines = data.toString().split('\n');
     for (const line of lines) {
@@ -253,7 +201,6 @@ async function spawnExecution(execution) {
     }
   });
 
-  // stderr handler
   child.stderr.on('data', async (data) => {
     const text = data.toString().trim();
     if (!text) return;
@@ -263,14 +210,12 @@ async function spawnExecution(execution) {
     socketService.emitLog(execution.id, logLine);
   });
 
-  // Process exit
   child.on('close', async (code) => {
     activeProcesses.delete(execution.id);
 
     const current = await executionStore.get(execution.id);
     if (!current) return;
 
-    // If already aborted (user stopped), don't override status.
     if (current.status === EXEC_STATUS.ABORTED) {
       await historyService.record(current);
       await executionStore.remove(execution.id);
@@ -301,7 +246,6 @@ async function spawnExecution(execution) {
 
     logger.success(`[Runner] Execution ${execution.id} completed: ${finalStatus} in ${duration}s`);
 
-    // Scan for artifacts after execution completes
     artifactScanner.scanAndRegister(
       execution.id,
       execution.suite,
@@ -312,7 +256,6 @@ async function spawnExecution(execution) {
     });
   });
 
-  // Process error (e.g. ENOENT)
   child.on('error', async (err) => {
     activeProcesses.delete(execution.id);
     logger.error(`[Runner] Process error for ${execution.id}`, err);
@@ -331,23 +274,16 @@ async function spawnExecution(execution) {
     socketService.emitError(execution.id, err.message);
   });
 
-  // Emit started event
   socketService.emitStarted(execution);
 }
 
-/**
- * Stop a running execution by killing its child process.
- *
- * @param {string} execId - Execution ID.
- * @returns {boolean} True if the process was found and killed.
- */
+/** Stops a running execution by killing its child process. */
 async function stopExecution(execId) {
   const child = activeProcesses.get(execId);
   if (!child) return false;
 
   logger.info(`[Runner] Stopping execution ${execId}`);
 
-  // Update store before killing so the close handler sees "aborted".
   await executionStore.update(execId, {
     status: EXEC_STATUS.ABORTED,
     duration: calcDuration((await executionStore.get(execId))?.startedAt),
@@ -365,7 +301,6 @@ async function stopExecution(execId) {
   } else {
     child.kill('SIGTERM');
 
-    // Force kill after 5 seconds if still alive.
     setTimeout(() => {
       if (activeProcesses.has(execId)) {
         child.kill('SIGKILL');
@@ -377,12 +312,7 @@ async function stopExecution(execId) {
   return true;
 }
 
-/**
- * Check if an execution is currently active (process running).
- *
- * @param {string} execId
- * @returns {boolean}
- */
+/** Checks if an execution is currently active. */
 function isRunning(execId) {
   return activeProcesses.has(execId);
 }

@@ -1,22 +1,10 @@
-/**
- * @fileoverview Settings controller.
- *
- * Returns server-side settings (environments, browsers) and accepts
- * settings updates. Environments are user-configurable — users can
- * add custom environment name → URL mappings.
- *
- * Currently in-memory; ready for DB persistence later.
- *
- * @module controllers/settings.controller
- */
+/** Handles server settings endpoints. */
 
 const { BROWSERS, ENV_URLS } = require('../utils/constants');
 const { sendSuccess, sendOk } = require('../utils/responseHelper');
 const logger = require('../utils/logger');
 
-/** @type {Object} In-memory settings store. */
 let settings = {
-  // User-configurable environment mappings (seeded from defaults)
   environments: { ...ENV_URLS },
   slackWebhookUrl: '',
   emailRecipient: '',
@@ -30,9 +18,7 @@ let settings = {
   dailyDigest: true,
 };
 
-/**
- * GET /api/settings
- */
+/** Retrieves server settings. */
 async function getSettings(_req, res) {
   sendSuccess(res, {
     environments: settings.environments,
@@ -45,9 +31,7 @@ async function getSettings(_req, res) {
   });
 }
 
-/**
- * PUT /api/settings
- */
+/** Updates server settings. */
 async function updateSettings(req, res) {
   const allowed = [
     'environments',
@@ -68,11 +52,7 @@ async function updateSettings(req, res) {
   sendOk(res);
 }
 
-/**
- * Get current environments map (used by environmentMapper).
- *
- * @returns {Record<string, string>}
- */
+/** Retrieves the current environments map. */
 function getEnvironments() {
   return { ...settings.environments };
 }

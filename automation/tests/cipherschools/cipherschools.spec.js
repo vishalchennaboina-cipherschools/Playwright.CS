@@ -13,6 +13,7 @@
 // ──────────────────────────────────────────────────────────────────────────
 
 const { test, expect } = require('@playwright/test');
+const logger = require('../../utils/logger');
 const { loginAs } = require('../../helpers/auth.helper');
 const { BasePage } = require('../../pages/BasePage');
 const { getFullSitemapUrls } = require('../../config/sitemap.config');
@@ -275,15 +276,15 @@ test('Login and visit all sitemap URLs', async ({ page }) => {
     try {
       const parsed = new URL(url);
       if (!/^https?:$/.test(parsed.protocol)) {
-        console.warn(`Skipping non-http URL: ${url}`);
+        logger.warn(`Skipping non-http URL: ${url}`);
         continue;
       }
     } catch {
-      console.warn(`Invalid URL, skipping: ${url}`);
+      logger.warn(`Invalid URL, skipping: ${url}`);
       continue;
     }
 
-    console.log(`Visiting: ${url}`);
+    logger.info(`Visiting: ${url}`);
     try {
       await page.goto(url, {
         waitUntil: 'domcontentloaded',
@@ -291,7 +292,7 @@ test('Login and visit all sitemap URLs', async ({ page }) => {
       });
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      console.error(`Navigation failed for ${url}: ${msg}`);
+      logger.error(`Navigation failed for ${url}: ${msg}`);
       continue;
     }
 

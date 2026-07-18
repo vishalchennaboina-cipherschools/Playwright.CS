@@ -1,16 +1,7 @@
-/**
- * @fileoverview Environment → BASE_URL mapper.
- *
- * Maps dashboard environment names to the corresponding application URLs.
- * Now reads from the mutable settings store instead of frozen constants,
- * supporting user-configurable environments.
- *
- * @module utils/environmentMapper
- */
+/** Maps dashboard environments to URLs. */
 
 const { ENV_URLS } = require('./constants');
 
-// Late-bind to avoid circular dependency at require time.
 let _getEnvironments = null;
 
 function getEnvMap() {
@@ -18,20 +9,13 @@ function getEnvMap() {
     try {
       _getEnvironments = require('../controllers/settings.controller').getEnvironments;
     } catch {
-      // Fallback to constants if settings controller not yet loaded.
       return { ...ENV_URLS };
     }
   }
   return _getEnvironments();
 }
 
-/**
- * Resolve the BASE_URL for a given environment name.
- *
- * @param {string} environment - Environment name (e.g. "QA", "Production").
- * @returns {string} The corresponding application URL.
- * @throws {Error} If the environment is not recognised.
- */
+/** Resolves the BASE_URL for an environment. */
 function resolveBaseUrl(environment) {
   const envMap = getEnvMap();
   const url = envMap[environment];
@@ -43,11 +27,7 @@ function resolveBaseUrl(environment) {
   return url;
 }
 
-/**
- * Get all available environment mappings.
- *
- * @returns {Record<string, string>}
- */
+/** Retrieves all environment mappings. */
 function getAllEnvironments() {
   return getEnvMap();
 }

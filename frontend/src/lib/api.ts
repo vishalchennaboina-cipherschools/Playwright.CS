@@ -1,5 +1,4 @@
-// REST client for the Express Playwright backend.
-// Base URL is user-configurable via Settings and persisted in localStorage.
+/** REST client for the Playwright backend. */
 
 import type { ExecStatus, Execution } from "./types";
 import type { LogLine } from "./execution-store";
@@ -42,15 +41,13 @@ async function req<T>(path: string, init?: RequestInit): Promise<T> {
   return (ct.includes("application/json") ? await res.json() : (await res.text() as unknown)) as T;
 }
 
-// Resolve a possibly-relative artifact URL against the configured API base URL.
+/** Resolves an artifact URL. */
 export function absoluteAssetUrl(url?: string | null): string {
   if (!url) return "";
   if (/^https?:\/\//i.test(url) || url.startsWith("blob:") || url.startsWith("data:")) return url;
   const base = getApiBaseUrl().replace(/\/+$/, "");
   return `${base}${url.startsWith("/") ? "" : "/"}${url}`;
 }
-
-// ---------- Spec discovery types ----------
 
 export interface SpecFile {
   name: string;
@@ -68,8 +65,6 @@ export interface SpecTree {
   totalFiles: number;
 }
 
-// ---------- Settings types ----------
-
 export interface BackendSettings {
   environments: Record<string, string>;
   browsers: string[];
@@ -85,8 +80,6 @@ export interface BackendSettings {
   dailyDigest: boolean;
 }
 
-// ---------- Execution types ----------
-
 export interface StartPayload {
   suite: string;
   environment: string;
@@ -94,6 +87,10 @@ export interface StartPayload {
   mode: "Headless" | "Headed";
   workers: number;
   specFile?: string;
+  email?: string;
+  password?: string;
+  customUrl?: string;
+  profile?: string;
 }
 
 export interface ExecutionDetail extends Execution {
@@ -103,12 +100,29 @@ export interface ExecutionDetail extends Execution {
   currentTest?: string;
   currentStep?: string;
   totalPlanned?: number;
+  email?: string;
+  profile?: string;
+  customUrl?: string;
 }
 
-// ---------- Endpoints ----------
+export interface ExecutionProfile {
+  _id: string;
+  name: string;
+  email: string;
+  defaultEnvironment: string;
+  defaultBrowser: "Chrome" | "Firefox" | "Edge";
+  defaultWorkers: number;
+  defaultMode: "Headless" | "Headed";
+  defaultFolder: string;
+  defaultSpec: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type CreateProfilePayload = Omit<ExecutionProfile, "_id" | "createdAt" | "updatedAt">;
 
 export const api = {
-  // Executions
   startExecution: (payload: StartPayload) =>
     req<ExecutionDetail>("/api/executions", { method: "POST", body: JSON.stringify(payload) }),
   stopExecution: (id: string) =>
@@ -117,7 +131,6 @@ export const api = {
   listExecutions: () => req<Execution[]>("/api/executions"),
   deleteExecution: (id: string) => req<{ ok: true }>(`/api/executions/${id}`, { method: "DELETE" }),
 
-  // Artifacts
   listScreenshots: () =>
     req<Array<{ id: string; execId: string; test: string; url: string; takenAt: string }>>(
       "/api/screenshots",
@@ -135,15 +148,20 @@ export const api = {
       "/api/reports",
     ),
 
-  // Spec discovery
   listSpecs: () => req<SpecTree>("/api/specs"),
 
-  // Settings
   getSettings: () => req<BackendSettings>("/api/settings"),
   updateSettings: (payload: Partial<BackendSettings>) =>
     req<{ ok: true }>("/api/settings", { method: "PUT", body: JSON.stringify(payload) }),
 
-  // Logs
   listLogs: () =>
     req<Array<{ ts: number; level: string; text: string }>>("/api/logs"),
+
+  listProfiles: () => req<ExecutionProfile[]>("/api/profiles"),
+  createProfile: (payload: CreateProfilePayload) =>
+    req<ExecutionProfile>("/api/profiles", { method: "POST", body: JSON.stringify(payload) }),
+  updateProfile: (id: string, payload: Partial<CreateProfilePayload>) =>
+    req<ExecutionProfile>(`/api/profiles/${id}`, { method: "PUT", body: JSON.stringify(payload) }),
+  deleteProfile: (id: string) =>
+    req<{ ok: true }>(`/api/profiles/${id}`, { method: "DELETE" }),
 };

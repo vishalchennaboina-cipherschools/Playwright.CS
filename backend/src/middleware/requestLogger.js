@@ -1,32 +1,35 @@
-/**
- * @fileoverview Custom request logger (morgan token format).
- *
- * Uses morgan to log each incoming request in a compact, coloured format.
- * In production, switches to the standard "combined" format.
- *
- * @module middleware/requestLogger
- */
+/** Intercepts incoming HTTP requests and logs their details. */
 
-const morgan = require('morgan');
+'use strict';
 
-/**
- * Create the morgan middleware for the current environment.
- *
- * @param {string} nodeEnv - "development" | "production" | "test".
- * @returns {import('express').RequestHandler}
- */
+const logger = require('../utils/logger');
+
+/** Logs HTTP requests and responses. */
 function createRequestLogger(nodeEnv) {
   if (nodeEnv === 'test') {
-    // Silence request logs during tests.
     return (_req, _res, next) => next();
   }
 
-  const format =
-    nodeEnv === 'production'
-      ? 'combined'
-      : ':method :url :status :response-time ms - :res[content-length]';
+  return function requestLogger(req, res, next) {
+    const start = process.hrtime.bigint();
 
-  return morgan(format);
+    res.on('finish', () => {
+      const end = process.hrtime.bigint();
+      const elapsedMs = Number(end - start) / 1e6;
+
+      const level = res.statusCode >= 500 ? 'error' : res.statusCode >= 400 ? 'warn' : 'info';
+
+      logger[level](`${req.method} ${req.originalUrl}`, {
+        category: logger.CATEGORIES.API,
+        method: req.method,
+        endpoint: req.originalUrl,
+        statusCode: res.statusCode,
+        responseTimeMs: elapsedMs.toFixed(2),
+      });
+    });
+
+    next();
+  };
 }
 
 module.exports = createRequestLogger;

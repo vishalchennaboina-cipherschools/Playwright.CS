@@ -1,24 +1,10 @@
-/**
- * @fileoverview Socket.IO server setup.
- *
- * Creates and configures the Socket.IO server instance,
- * registers connection handlers, and integrates with the
- * socket service for event broadcasting.
- *
- * @module socket/index
- */
+/** Creates and configures the Socket.IO server instance. */
 
 const { Server } = require('socket.io');
 const socketService = require('../services/socketService');
 const logger = require('../utils/logger');
 
-/**
- * Attach Socket.IO to an HTTP server.
- *
- * @param {import('http').Server} httpServer - Node HTTP server instance.
- * @param {string[]}              corsOrigins - Allowed CORS origins.
- * @returns {import('socket.io').Server} The Socket.IO server instance.
- */
+/** Attaches Socket.IO to an HTTP server. */
 function createSocketServer(httpServer, corsOrigins) {
   const io = new Server(httpServer, {
     cors: {
@@ -26,35 +12,30 @@ function createSocketServer(httpServer, corsOrigins) {
       methods: ['GET', 'POST'],
       credentials: true,
     },
-    // Graceful degradation: start with WebSocket, fall back to polling.
     transports: ['websocket', 'polling'],
   });
 
-  // ── Connection lifecycle ─────────────────────────────────────────────────
-
   io.on('connection', (socket) => {
-    logger.info(`[Socket] Client connected: ${socket.id}`);
+    logger.info(`Client connected: ${socket.id}`, { category: logger.CATEGORIES.SOCKET });
 
     socket.on('disconnect', (reason) => {
-      logger.debug(`[Socket] Client disconnected: ${socket.id} (${reason})`);
+      logger.debug(`Client disconnected: ${socket.id} (${reason})`, { category: logger.CATEGORIES.SOCKET });
     });
 
-    // Future: subscribe to a specific execution room.
     socket.on('join-execution', (execId) => {
       socket.join(`exec:${execId}`);
-      logger.debug(`[Socket] ${socket.id} joined room exec:${execId}`);
+      logger.debug(`${socket.id} joined room exec:${execId}`, { category: logger.CATEGORIES.SOCKET });
     });
 
     socket.on('leave-execution', (execId) => {
       socket.leave(`exec:${execId}`);
-      logger.debug(`[Socket] ${socket.id} left room exec:${execId}`);
+      logger.debug(`${socket.id} left room exec:${execId}`, { category: logger.CATEGORIES.SOCKET });
     });
   });
 
-  // Register the io instance with the socket service.
   socketService.init(io);
 
-  logger.success('[Socket] Socket.IO server initialised');
+  logger.success('Socket.IO server initialised', { category: logger.CATEGORIES.SOCKET });
   return io;
 }
 

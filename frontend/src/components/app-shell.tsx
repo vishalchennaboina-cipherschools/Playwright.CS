@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard, Play, History, FileText, Image as ImageIcon,
-  Video, Route as RouteIcon, Terminal, Settings, Zap, Activity,
+  Video, Route as RouteIcon, Terminal, Settings, Zap, Activity, BookMarked,
 } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 const primary = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Run Tests", url: "/run", icon: Play },
+  { title: "Execution Profiles", url: "/profiles", icon: BookMarked },
   { title: "Execution History", url: "/history", icon: History },
 ];
 const artifacts = [
@@ -101,6 +102,7 @@ function Topbar() {
   const currentPath = useRouterState({ select: (r) => r.location.pathname });
   const label = ({
     "/": "Dashboard", "/run": "Run Tests", "/history": "Execution History",
+    "/profiles": "Execution Profiles",
     "/reports": "Reports", "/screenshots": "Screenshots", "/videos": "Videos",
     "/traces": "Trace Viewer", "/logs": "Logs", "/settings": "Settings",
   } as Record<string, string>)[currentPath] ?? "";

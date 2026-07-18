@@ -1,11 +1,4 @@
-/**
- * @fileoverview ExecutionHistory model.
- *
- * Stores completed executions persistently.
- * Same structure as Execution but meant for long-term storage of runs.
- *
- * @module models/ExecutionHistory
- */
+/** Stores completed execution history. */
 
 const mongoose = require('mongoose');
 const { EXEC_STATUS, BROWSERS, MODES } = require('../utils/constants');
@@ -40,8 +33,10 @@ const executionHistorySchema = new mongoose.Schema(
     failed: { type: Number, default: 0, min: 0 },
     skipped: { type: Number, default: 0, min: 0 },
     triggeredBy: { type: String, default: 'dashboard', trim: true },
+    email:     { type: String, default: '', trim: true },
+    profile:   { type: String, default: '', trim: true },
+    customUrl: { type: String, default: '', trim: true },
     logs: { type: [logLineSchema], default: [] },
-    // Fields for historical compatibility. Progress is always 100 on completion.
     progress: { type: Number, default: 100, min: 0, max: 100 },
     currentFile: { type: String, default: '' },
     currentTest: { type: String, default: '' },

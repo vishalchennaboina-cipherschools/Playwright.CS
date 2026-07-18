@@ -1,21 +1,8 @@
-/**
- * @fileoverview Response formatter middleware.
- *
- * Attaches convenience methods to the response object
- * so controllers can call `res.sendSuccess(data)` etc.
- *
- * @module middleware/responseFormatter
- */
+/** Attaches convenience methods to the response object. */
 
 const { sendSuccess, sendError, sendOk } = require('../utils/responseHelper');
 
-/**
- * Attach helper methods to every response.
- *
- * @param {import('express').Request}      req
- * @param {import('express').Response}     res
- * @param {import('express').NextFunction} next
- */
+/** Attaches helper methods to every response. */
 function responseFormatter(req, res, next) {
   res.sendSuccess = (data, statusCode) => sendSuccess(res, data, statusCode);
   res.sendError = (message, statusCode, details) => sendError(res, message, statusCode, details);

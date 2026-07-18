@@ -170,10 +170,11 @@ function DashboardHome() {
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
+                <Tooltip contentStyle={{ background: "var(--color-popover)", border: "1px solid var(--color-border)", borderRadius: 8, fontSize: 12, color: "var(--color-foreground)" }} itemStyle={{ color: "var(--color-foreground)" }} />
                 <Pie data={pieData} innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="value">
-                  {pieData.map((d, i) => <Cell key={i} fill={d.color} stroke="oklch(0.16 0.015 250)" strokeWidth={2} />)}
+                  {pieData.map((d, i) => <Cell key={i} fill={d.color} stroke="var(--color-background)" strokeWidth={2} />)}
                 </Pie>
-                <Legend iconType="circle" wrapperStyle={{ fontSize: 12, color: "oklch(0.68 0.015 250)" }} />
+                <Legend iconType="circle" wrapperStyle={{ fontSize: 12, color: "var(--color-muted-foreground)" }} />
               </PieChart>
             </ResponsiveContainer>
           </div>

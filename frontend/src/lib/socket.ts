@@ -1,4 +1,5 @@
 import { io, Socket } from "socket.io-client";
+import { logger } from "./logger";
 import { getApiBaseUrl } from "./api";
 
 let socket: Socket | null = null;
@@ -16,11 +17,11 @@ export function getSocket(): Socket {
   });
 
   socket.on("connect", () => {
-    console.log("Connected to backend Socket.IO server");
+    logger.info("Connected to backend Socket.IO server", { category: logger.CATEGORIES.SOCKET });
   });
 
   socket.on("disconnect", (reason) => {
-    console.log("Disconnected from backend Socket.IO server:", reason);
+    logger.info(`Disconnected from backend Socket.IO server: ${reason}`, { category: logger.CATEGORIES.SOCKET });
   });
 
   return socket;

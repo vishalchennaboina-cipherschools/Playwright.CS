@@ -1,11 +1,4 @@
-/**
- * @fileoverview HTTP + Socket.IO server bootstrap.
- *
- * Creates the HTTP server from the Express app, attaches Socket.IO,
- * starts listening, and handles graceful shutdown.
- *
- * @module server
- */
+/** Bootstraps the HTTP and Socket.IO server. */
 
 const http = require('node:http');
 const createApp = require('./app');
@@ -16,7 +9,6 @@ const { ensureDir } = require('./utils/fileHelper');
 const { connectDB, disconnectDB } = require('./config/db');
 
 async function bootstrap() {
-  // Ensure upload directories exist.
   await ensureDir(config.uploadsDir);
   await ensureDir(`${config.uploadsDir}/reports`);
   await ensureDir(`${config.uploadsDir}/screenshots`);
@@ -24,44 +16,36 @@ async function bootstrap() {
   await ensureDir(`${config.uploadsDir}/traces`);
   await ensureDir(`${config.uploadsDir}/logs`);
 
-  // Connect to MongoDB
   await connectDB();
 
-  // Create Express app.
   const app = createApp();
-
-  // Create HTTP server.
   const server = http.createServer(app);
 
-  // Attach Socket.IO.
   createSocketServer(server, config.corsOrigins);
 
-  // Start listening.
   server.listen(config.port, config.host, () => {
-    logger.success(`[Server] Playwright Automation Backend running`);
-    logger.info(`[Server] REST API:    http://${config.host}:${config.port}`);
-    logger.info(`[Server] Socket.IO:   http://${config.host}:${config.port}`);
-    logger.info(`[Server] Health:      http://${config.host}:${config.port}/health`);
-    logger.info(`[Server] Uploads:     http://${config.host}:${config.port}/uploads`);
-    logger.info(`[Server] Environment: ${config.nodeEnv}`);
-    logger.info(`[Server] CORS:        ${config.corsOrigins.join(', ')}`);
-    logger.info(`[Server] Playwright:  ${config.playwrightProjectPath}`);
+    const meta = { category: logger.CATEGORIES.SERVER };
+    logger.success(`Playwright Automation Backend running`, meta);
+    logger.info(`REST API:    http://${config.host}:${config.port}`, meta);
+    logger.info(`Socket.IO:   http://${config.host}:${config.port}`, meta);
+    logger.info(`Health:      http://${config.host}:${config.port}/health`, meta);
+    logger.info(`Uploads:     http://${config.host}:${config.port}/uploads`, meta);
+    logger.info(`Environment: ${config.nodeEnv}`, meta);
+    logger.info(`CORS:        ${config.corsOrigins.join(', ')}`, meta);
+    logger.info(`Playwright:  ${config.playwrightProjectPath}`, meta);
   });
 
-  // ── Graceful shutdown ──────────────────────────────────────────────────
-
   function shutdown(signal) {
-    logger.warn(`[Server] Received ${signal}. Shutting down gracefully…`);
+    logger.warn(`Received ${signal}. Shutting down gracefully…`, { category: logger.CATEGORIES.SERVER });
 
     server.close(async () => {
-      logger.info('[Server] HTTP server closed');
+      logger.info('HTTP server closed', { category: logger.CATEGORIES.SERVER });
       await disconnectDB();
       process.exit(0);
     });
 
-    // Force exit after 10 seconds.
     setTimeout(() => {
-      logger.error('[Server] Forced shutdown after timeout');
+      logger.error('Forced shutdown after timeout', { category: logger.CATEGORIES.SERVER });
       process.exit(1);
     }, 10_000);
   }
@@ -69,18 +53,20 @@ async function bootstrap() {
   process.on('SIGINT', () => shutdown('SIGINT'));
   process.on('SIGTERM', () => shutdown('SIGTERM'));
 
-  // Catch uncaught exceptions.
   process.on('uncaughtException', (err) => {
-    logger.error('[Server] Uncaught exception', err);
+    logger.error('Uncaught exception', { category: logger.CATEGORIES.SERVER, error: err });
     shutdown('uncaughtException');
   });
 
   process.on('unhandledRejection', (reason) => {
-    logger.error('[Server] Unhandled rejection', reason);
+    logger.error('Unhandled rejection', { category: logger.CATEGORIES.SERVER, reason });
   });
 }
 
 bootstrap().catch((err) => {
-  console.error('Failed to start server:', err);
+  logger.error('Failed to start server:', {
+    category: logger.CATEGORIES.SERVER,
+    error: err
+  });
   process.exit(1);
 });

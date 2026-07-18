@@ -1,12 +1,4 @@
-/**
- * @fileoverview Express application factory.
- *
- * Builds and configures the Express app with all middleware, routes,
- * and error handlers. The app is exported separately from the HTTP
- * server so it can be used in tests without starting the server.
- *
- * @module app
- */
+/** Configures the Express application. */
 
 const express = require('express');
 const cors = require('cors');
@@ -14,35 +6,29 @@ const compression = require('compression');
 const path = require('node:path');
 
 const config = require('./config');
+const { correlationMiddleware } = require('./middleware/correlation');
 const createRequestLogger = require('./middleware/requestLogger');
 const createSecurityMiddleware = require('./middleware/security');
 const responseFormatter = require('./middleware/responseFormatter');
 const notFound = require('./middleware/notFound');
 const errorHandler = require('./middleware/errorHandler');
 
-// Routes
 const executionRoutes = require('./routes/execution.routes');
-const artifactRoutes = require('./routes/artifact.routes');
-const settingsRoutes = require('./routes/settings.routes');
-const specRoutes = require('./routes/spec.routes');
+const artifactRoutes  = require('./routes/artifact.routes');
+const settingsRoutes  = require('./routes/settings.routes');
+const specRoutes      = require('./routes/spec.routes');
+const profileRoutes   = require('./routes/profile.routes');
 
 const logger = require('./utils/logger');
 
-/**
- * Create and configure the Express application.
- *
- * @returns {import('express').Express}
- */
 function createApp() {
   const app = express();
 
-  // ── Security ───────────────────────────────────────────────────────────
   const securityMiddleware = createSecurityMiddleware();
   for (const mw of securityMiddleware) {
     app.use(mw);
   }
 
-  // ── CORS ───────────────────────────────────────────────────────────────
   app.use(
     cors({
       origin: config.corsOrigins,
@@ -52,27 +38,22 @@ function createApp() {
     }),
   );
 
-  // ── Compression ────────────────────────────────────────────────────────
   app.use(compression());
 
-  // ── Body parsing ───────────────────────────────────────────────────────
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ extended: true }));
 
-  // ── Request logging ────────────────────────────────────────────────────
+  app.use(correlationMiddleware);
   app.use(createRequestLogger(config.nodeEnv));
 
-  // ── Response formatter ─────────────────────────────────────────────────
   app.use(responseFormatter);
 
-  // ── Static files (artifact serving) ────────────────────────────────────
-  // Serves /uploads/* from the uploads directory.
+  // Serves generated artifacts.
   app.use(
     '/uploads',
     express.static(config.uploadsDir, {
       maxAge: '7d',
       setHeaders: (res, filePath) => {
-        // Trace ZIPs need CORS for trace.playwright.dev
         if (filePath.endsWith('.zip')) {
           res.setHeader('Access-Control-Allow-Origin', '*');
           res.setHeader('Content-Type', 'application/zip');
@@ -81,7 +62,6 @@ function createApp() {
     }),
   );
 
-  // ── Health check ───────────────────────────────────────────────────────
   app.get('/health', (_req, res) => {
     res.json({
       status: 'healthy',
@@ -90,16 +70,13 @@ function createApp() {
     });
   });
 
-  // ── API routes ─────────────────────────────────────────────────────────
   app.use('/api/executions', executionRoutes);
+  app.use('/api/profiles',   profileRoutes);
   app.use('/api', artifactRoutes);
   app.use('/api', settingsRoutes);
   app.use('/api', specRoutes);
 
-  // ── 404 fallback ───────────────────────────────────────────────────────
   app.use(notFound);
-
-  // ── Global error handler (must be last) ────────────────────────────────
   app.use(errorHandler);
 
   logger.info('[App] Express application configured');

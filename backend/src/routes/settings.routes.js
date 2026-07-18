@@ -1,10 +1,4 @@
-/**
- * @fileoverview Settings routes.
- *
- * Mounts at: /api
- *
- * @module routes/settings.routes
- */
+/** Maps settings routes. */
 
 const { Router } = require('express');
 const ctrl = require('../controllers/settings.controller');

@@ -15,6 +15,7 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ScreenshotsRouteImport } from './routes/screenshots'
 import { Route as RunRouteImport } from './routes/run'
 import { Route as ReportsRouteImport } from './routes/reports'
+import { Route as ProfilesRouteImport } from './routes/profiles'
 import { Route as LogsRouteImport } from './routes/logs'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as IndexRouteImport } from './routes/index'
@@ -49,6 +50,11 @@ const ReportsRoute = ReportsRouteImport.update({
   path: '/reports',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfilesRoute = ProfilesRouteImport.update({
+  id: '/profiles',
+  path: '/profiles',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LogsRoute = LogsRouteImport.update({
   id: '/logs',
   path: '/logs',
@@ -69,6 +75,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/history': typeof HistoryRoute
   '/logs': typeof LogsRoute
+  '/profiles': typeof ProfilesRoute
   '/reports': typeof ReportsRoute
   '/run': typeof RunRoute
   '/screenshots': typeof ScreenshotsRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/history': typeof HistoryRoute
   '/logs': typeof LogsRoute
+  '/profiles': typeof ProfilesRoute
   '/reports': typeof ReportsRoute
   '/run': typeof RunRoute
   '/screenshots': typeof ScreenshotsRoute
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/history': typeof HistoryRoute
   '/logs': typeof LogsRoute
+  '/profiles': typeof ProfilesRoute
   '/reports': typeof ReportsRoute
   '/run': typeof RunRoute
   '/screenshots': typeof ScreenshotsRoute
@@ -105,6 +114,7 @@ export interface FileRouteTypes {
     | '/'
     | '/history'
     | '/logs'
+    | '/profiles'
     | '/reports'
     | '/run'
     | '/screenshots'
@@ -116,6 +126,7 @@ export interface FileRouteTypes {
     | '/'
     | '/history'
     | '/logs'
+    | '/profiles'
     | '/reports'
     | '/run'
     | '/screenshots'
@@ -127,6 +138,7 @@ export interface FileRouteTypes {
     | '/'
     | '/history'
     | '/logs'
+    | '/profiles'
     | '/reports'
     | '/run'
     | '/screenshots'
@@ -139,6 +151,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   HistoryRoute: typeof HistoryRoute
   LogsRoute: typeof LogsRoute
+  ProfilesRoute: typeof ProfilesRoute
   ReportsRoute: typeof ReportsRoute
   RunRoute: typeof RunRoute
   ScreenshotsRoute: typeof ScreenshotsRoute
@@ -191,6 +204,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReportsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profiles': {
+      id: '/profiles'
+      path: '/profiles'
+      fullPath: '/profiles'
+      preLoaderRoute: typeof ProfilesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/logs': {
       id: '/logs'
       path: '/logs'
@@ -219,6 +239,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HistoryRoute: HistoryRoute,
   LogsRoute: LogsRoute,
+  ProfilesRoute: ProfilesRoute,
   ReportsRoute: ReportsRoute,
   RunRoute: RunRoute,
   ScreenshotsRoute: ScreenshotsRoute,

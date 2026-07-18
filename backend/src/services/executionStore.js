@@ -1,16 +1,8 @@
-/**
- * @fileoverview Execution store.
- *
- * Maintains live execution state in a Map for responsive runner/socket
- * updates and persists the same frontend-facing shape to MongoDB.
- *
- * @module services/executionStore
- */
+/** Maintains live execution state. */
 
 const logger = require('../utils/logger');
 const Execution = require('../models/Execution');
 
-/** @type {Map<string, Object>} */
 const store = new Map();
 
 const LOG_LIMIT = 2000;
@@ -38,6 +30,9 @@ function toPlain(doc) {
     failed: raw.failed || 0,
     skipped: raw.skipped || 0,
     triggeredBy: raw.triggeredBy || 'dashboard',
+    email:     raw.email     || '',
+    profile:   raw.profile   || '',
+    customUrl: raw.customUrl || '',
     logs: raw.logs || [],
     progress: raw.progress || 0,
     currentFile: raw.currentFile || '',
@@ -55,12 +50,7 @@ async function persist(execution) {
   ).exec();
 }
 
-/**
- * Create (persist) a new execution in the store.
- *
- * @param {Object} execution - Full ExecutionDetail object.
- * @returns {Promise<Object>} The stored execution.
- */
+/** Creates a new execution in the store. */
 async function create(execution) {
   store.set(execution.id, clone(execution));
   await persist(execution);
@@ -68,12 +58,7 @@ async function create(execution) {
   return get(execution.id);
 }
 
-/**
- * Retrieve a single execution by ID.
- *
- * @param {string} id - Execution ID.
- * @returns {Promise<Object|null>} The execution, or null if not found.
- */
+/** Retrieves a single execution by ID. */
 async function get(id) {
   const exec = store.get(id);
   if (exec) return clone(exec);
@@ -82,11 +67,7 @@ async function get(id) {
   return toPlain(doc);
 }
 
-/**
- * Retrieve all executions, newest first.
- *
- * @returns {Promise<Object[]>}
- */
+/** Retrieves all executions. */
 async function getAll() {
   const docs = await Execution.find({}).sort({ startedAt: -1 }).lean().exec();
   const byId = new Map(docs.map((doc) => [doc.id, toPlain(doc)]));
@@ -100,13 +81,7 @@ async function getAll() {
   );
 }
 
-/**
- * Partially update an execution.
- *
- * @param {string} id      - Execution ID.
- * @param {Object} updates - Partial fields to merge.
- * @returns {Promise<Object|null>}  The updated execution, or null.
- */
+/** Updates an execution partially. */
 async function update(id, updates) {
   const exec = store.get(id) || (await get(id));
   if (!exec) return null;
@@ -118,20 +93,13 @@ async function update(id, updates) {
   return clone(next);
 }
 
-/**
- * Append a log line to an execution's log array.
- *
- * @param {string} id      - Execution ID.
- * @param {{ ts: number, level: string, text: string }} logLine
- * @returns {Promise<void>}
- */
+/** Appends a log line to an execution. */
 async function appendLog(id, logLine) {
   const exec = store.get(id) || (await get(id));
   if (!exec) return;
 
   exec.logs = [...(exec.logs || []), logLine];
 
-  // Cap at 2000 lines to prevent unbounded memory/DB growth.
   if (exec.logs.length > LOG_LIMIT) {
     exec.logs = exec.logs.slice(-LOG_SLICE);
   }
@@ -144,12 +112,7 @@ async function appendLog(id, logLine) {
   ).exec();
 }
 
-/**
- * Delete an execution from the store and MongoDB.
- *
- * @param {string} id - Execution ID.
- * @returns {Promise<boolean>} True if the execution existed and was deleted.
- */
+/** Deletes an execution. */
 async function remove(id) {
   const memoryExisted = store.delete(id);
   const result = await Execution.deleteOne({ id }).exec();
@@ -158,29 +121,18 @@ async function remove(id) {
   return existed;
 }
 
-/**
- * Check whether an execution exists.
- *
- * @param {string} id - Execution ID.
- * @returns {Promise<boolean>}
- */
+/** Checks if an execution exists. */
 async function has(id) {
   if (store.has(id)) return true;
   return Boolean(await Execution.exists({ id }).exec());
 }
 
-/**
- * Get the count of stored executions.
- *
- * @returns {Promise<number>}
- */
+/** Returns the count of stored executions. */
 async function size() {
   return Execution.countDocuments({}).exec();
 }
 
-/**
- * Clear all entries (useful for tests).
- */
+/** Clears all entries. */
 async function clear() {
   store.clear();
   await Execution.deleteMany({}).exec();

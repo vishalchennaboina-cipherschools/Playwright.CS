@@ -1,18 +1,6 @@
-/**
- * @fileoverview Duration formatting utility.
- *
- * Converts raw seconds into human-readable strings that match
- * the frontend's `formatDuration()` output.
- *
- * @module utils/durationFormatter
- */
+/** Provides duration formatting utilities. */
 
-/**
- * Format seconds into a human-readable duration string.
- *
- * @param {number} totalSeconds - Duration in seconds.
- * @returns {string} e.g. "2m 22s", "1h 12m", "45s".
- */
+/** Formats seconds into a human-readable string. */
 function formatDuration(totalSeconds) {
   if (typeof totalSeconds !== 'number' || totalSeconds < 0) return '0s';
 
@@ -39,13 +27,7 @@ function formatDuration(totalSeconds) {
     : `${hours}h`;
 }
 
-/**
- * Calculate duration in seconds between two timestamps.
- *
- * @param {string|Date|number} startedAt - Start time.
- * @param {string|Date|number} [endedAt] - End time (defaults to now).
- * @returns {number} Duration in seconds.
- */
+/** Calculates duration in seconds between two timestamps. */
 function calcDuration(startedAt, endedAt) {
   const start = new Date(startedAt).getTime();
   const end = endedAt ? new Date(endedAt).getTime() : Date.now();

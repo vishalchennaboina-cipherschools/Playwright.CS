@@ -1,43 +1,19 @@
-/**
- * @fileoverview File-system helper utilities.
- *
- * Wraps common fs-extra operations with error handling and path resolution.
- * Used by the artifact scanner, runner, and history service.
- *
- * @module utils/fileHelper
- */
+/** Provides file-system helper utilities. */
 
 const fse = require('fs-extra');
 const path = require('node:path');
 
-/**
- * Ensure a directory exists, creating it recursively if needed.
- *
- * @param {string} dirPath - Absolute or relative directory path.
- * @returns {Promise<void>}
- */
+/** Ensures a directory exists, creating it recursively if needed. */
 async function ensureDir(dirPath) {
   await fse.ensureDir(dirPath);
 }
 
-/**
- * Copy a file or directory to a destination.
- *
- * @param {string} src  - Source path.
- * @param {string} dest - Destination path.
- * @returns {Promise<void>}
- */
+/** Copies a file or directory. */
 async function copyArtifact(src, dest) {
   await fse.copy(src, dest, { overwrite: true });
 }
 
-/**
- * List all files in a directory recursively.
- *
- * @param {string}   dirPath    - Root directory to scan.
- * @param {string[]} [extensions] - Optional filter by file extensions (e.g. ['.png', '.jpg']).
- * @returns {Promise<string[]>} Array of absolute file paths.
- */
+/** Lists all files in a directory recursively. */
 async function listFilesRecursive(dirPath, extensions = []) {
   const exists = await fse.pathExists(dirPath);
   if (!exists) return [];
@@ -62,12 +38,7 @@ async function listFilesRecursive(dirPath, extensions = []) {
   return results;
 }
 
-/**
- * Get file size in bytes.
- *
- * @param {string} filePath - Absolute path to the file.
- * @returns {Promise<number>} Size in bytes, or 0 if file does not exist.
- */
+/** Gets file size in bytes. */
 async function getFileSize(filePath) {
   try {
     const stat = await fse.stat(filePath);
@@ -77,34 +48,19 @@ async function getFileSize(filePath) {
   }
 }
 
-/**
- * Format bytes into a human-readable size string.
- *
- * @param {number} bytes - Size in bytes.
- * @returns {string} e.g. "3.2 MB", "512 KB".
- */
+/** Formats bytes into a human-readable size string. */
 function formatFileSize(bytes) {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
 }
 
-/**
- * Check whether a path exists.
- *
- * @param {string} targetPath - Path to check.
- * @returns {Promise<boolean>}
- */
+/** Checks whether a path exists. */
 async function pathExists(targetPath) {
   return fse.pathExists(targetPath);
 }
 
-/**
- * Remove a file or directory.
- *
- * @param {string} targetPath - Path to remove.
- * @returns {Promise<void>}
- */
+/** Removes a file or directory. */
 async function remove(targetPath) {
   await fse.remove(targetPath);
 }
