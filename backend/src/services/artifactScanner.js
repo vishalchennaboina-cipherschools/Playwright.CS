@@ -58,18 +58,19 @@ async function scanAndRegister(execId, suite, environment, status) {
 
   if (await pathExists(reportDir)) {
     try {
-      const destDir = path.join(UPLOAD_DIRS[ARTIFACT_TYPES.REPORT], execId);
-      await ensureDir(destDir);
+      const destDir = reportDir;
       
-      const metadataFile = path.join(reportDir, 'metadata.json');
-      const executionFile = path.join(reportDir, 'execution.json');
+      const metadataFile = path.join(destDir, 'metadata.json');
+      const executionFile = path.join(destDir, 'execution.json');
       await fs.promises.writeFile(metadataFile, JSON.stringify({ execId, suite, environment, status }, null, 2));
       await fs.promises.writeFile(executionFile, JSON.stringify({ execId, generatedAt: new Date().toISOString() }, null, 2));
       
-      const zipDestPath = path.join(reportDir, 'report.zip');
-      const size = await zipDirectory(reportDir, zipDestPath);
+      const os = require('node:os');
+      const tempZipPath = path.join(os.tmpdir(), `report-${execId}.zip`);
+      const size = await zipDirectory(destDir, tempZipPath);
       
-      await fse.copy(reportDir, destDir, { overwrite: true });
+      const zipDestPath = path.join(destDir, 'report.zip');
+      await fse.move(tempZipPath, zipDestPath, { overwrite: true });
 
       if (await pathExists(path.join(destDir, 'index.html'))) {
           await fse.move(path.join(destDir, 'index.html'), path.join(destDir, 'report.html'), { overwrite: true });

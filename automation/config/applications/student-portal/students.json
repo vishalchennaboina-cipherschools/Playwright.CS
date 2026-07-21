@@ -1,0 +1,20 @@
+[
+  {
+    "id": "student-valid",
+    "displayName": "Valid Student",
+    "application": "student-portal",
+    "role": "student",
+    "email": "luffydmonkey6988420@gmail.com",
+    "description": "Primary Smoke Test Account",
+    "passwordEnv": "STUDENT_PASSWORD"
+  },
+  {
+    "id": "student-invalid",
+    "displayName": "Invalid Student",
+    "application": "student-portal",
+    "role": "student",
+    "email": "luffydmonkey6988420@gmail.com",
+    "description": "Student Account for invalid login tests",
+    "passwordEnv": "INVALID_STUDENT_PASSWORD"
+  }
+]

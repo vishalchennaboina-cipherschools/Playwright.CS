@@ -1,0 +1,20 @@
+[
+  {
+    "id": "mentor-valid",
+    "displayName": "Valid Mentor",
+    "application": "student-portal",
+    "role": "mentor",
+    "email": "niteshch200053@gmail.com",
+    "description": "Mentor Account",
+    "passwordEnv": "MENTOR_PASSWORD"
+  },
+  {
+    "id": "mentor-invalid",
+    "displayName": "Invalid Mentor",
+    "application": "student-portal",
+    "role": "mentor",
+    "email": "niteshch200053@gmail.com",
+    "description": "Mentor account with invalid password",
+    "passwordEnv": "INVALID_MENTOR_PASSWORD"
+  }
+]

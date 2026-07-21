@@ -7,6 +7,7 @@ const executionStore = require('./executionStore');
 const historyService = require('./historyService');
 const socketService = require('./socketService');
 const { EXEC_STATUS, BROWSER_PROJECT_MAP } = require('../utils/constants');
+const evidenceManager = require('./evidenceManager');
 const artifactScanner = require('./artifactScanner');
 const { createLogLine, detectLogLevel, resolveSpecFiles } = require('../utils/executionHelper');
 const { calcDuration } = require('../utils/durationFormatter');
@@ -210,7 +211,7 @@ async function spawnExecution(execution) {
     socketService.emitLog(execution.id, logLine);
   });
 
-  child.on('close', async (code) => {
+  child.on('exit', async (code) => {
     activeProcesses.delete(execution.id);
 
     const current = await executionStore.get(execution.id);
@@ -246,13 +247,12 @@ async function spawnExecution(execution) {
 
     logger.success(`[Runner] Execution ${execution.id} completed: ${finalStatus} in ${duration}s`);
 
-    artifactScanner.scanAndRegister(
-      execution.id,
-      execution.suite,
-      execution.environment,
-      finalStatus,
-    ).catch((err) => {
-      logger.warn(`[Runner] Artifact scan failed for ${execution.id}: ${err.message}`);
+    evidenceManager.processExecution(execution.id).catch((err) => {
+      logger.warn(`[Runner] Evidence processing failed for ${execution.id}: ${err.message}`);
+    });
+
+    artifactScanner.scanAndRegister(execution.id, current.suite, current.environment, finalStatus).catch((err) => {
+      logger.warn(`[Runner] Artifact scanning failed for ${execution.id}: ${err.message}`);
     });
   });
 

@@ -2,8 +2,8 @@
  * @fileoverview Auth helper — reusable login fixture for test hooks.
  *
  * Provides a `loginAs` helper that performs the full login + cookie-banner
- * dismissal sequence using credentials from the central config. Import it
- * in test files that need an authenticated page.
+ * dismissal sequence using credentials from the central config or UserManager.
+ * Import it in test files that need an authenticated page.
  *
  * Usage (in a test file):
  *   const { loginAs } = require('../../helpers/auth.helper');
@@ -11,7 +11,9 @@
  *
  *   test.beforeEach(async ({ page }) => {
  *     await page.goto('/');
- *     await loginAs(page, config.credentials);
+ *     await loginAs(page, config.credentials); // Backward compatible
+ *     // OR
+ *     await loginAs(page, 'student-valid'); // Using UserManager
  *   });
  *
  * The config.credentials object is populated from env vars injected by the
@@ -21,15 +23,30 @@
 'use strict';
 
 const { LoginPage } = require('../pages/LoginPage');
+const userManager = require('./userManager');
 
 /**
  * Login to the application and dismiss the cookie banner.
  *
  * @param {import('@playwright/test').Page} page
- * @param {{ email: string, password: string }} credentials
+ * @param {{ email: string, password: string } | string} credentialsOrId - Credentials object OR a user ID string.
  * @returns {Promise<void>}
  */
-async function loginAs(page, credentials) {
+async function loginAs(page, credentialsOrId) {
+  let credentials;
+
+  if (typeof credentialsOrId === 'string') {
+    // Treat as user ID and fetch from UserManager
+    const user = userManager.getUserById(credentialsOrId);
+    credentials = { email: user.email, password: user.password };
+  } else if (credentialsOrId && credentialsOrId.id) {
+    // If a resolved User object was passed directly
+    credentials = { email: credentialsOrId.email, password: credentialsOrId.password };
+  } else {
+    // Backward compatibility: raw credentials object
+    credentials = credentialsOrId;
+  }
+
   const loginPage = new LoginPage(page);
   await loginPage.login(credentials);
   // Wait for the SPA to finish any delayed auto-redirects (e.g. to the last visited page)

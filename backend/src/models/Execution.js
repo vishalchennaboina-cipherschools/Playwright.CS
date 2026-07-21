@@ -33,8 +33,8 @@ const executionSchema = new mongoose.Schema(
     failed: { type: Number, default: 0, min: 0 },
     skipped: { type: Number, default: 0, min: 0 },
     triggeredBy: { type: String, default: 'dashboard', trim: true },
-    email:     { type: String, default: '', trim: true },
-    profile:   { type: String, default: '', trim: true },
+    email: { type: String, default: '', trim: true },
+    profile: { type: String, default: '', trim: true },
     customUrl: { type: String, default: '', trim: true },
     logs: { type: [logLineSchema], default: [] },
     progress: { type: Number, default: 0, min: 0, max: 100 },
@@ -53,5 +53,8 @@ const executionSchema = new mongoose.Schema(
 
 executionSchema.index({ status: 1, startedAt: -1 });
 executionSchema.index({ startedAt: -1 });
+
+// TTL Index: Automatically expire execution records after 7 days (604800 seconds)
+executionSchema.index({ createdAt: 1 }, { expireAfterSeconds: 604800 });
 
 module.exports = mongoose.model('Execution', executionSchema);

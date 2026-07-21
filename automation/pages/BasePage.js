@@ -44,24 +44,6 @@ class BasePage {
         });
     }
 
-    // Forcefully hide modal root to prevent random marketing popups from intercepting clicks.
-    // We inject it for the current page, and also add an init script for any future reloads.
-    // We use an interval to ensure React hydration doesn't wipe the style tag.
-    const hideModalsFn = () => {
-      setInterval(() => {
-        if (!document.getElementById('anti-modal-style')) {
-          const style = document.createElement('style');
-          style.id = 'anti-modal-style';
-          style.textContent = '#modal-root { display: none !important; }';
-          document.head.appendChild(style);
-        }
-      }, 500);
-    };
-    
-    // Run immediately on current page
-    await this.page.evaluate(hideModalsFn).catch(() => {});
-    // Register for any future hard reloads
-    await this.page.addInitScript(hideModalsFn).catch(() => {});
   }
 
   /**

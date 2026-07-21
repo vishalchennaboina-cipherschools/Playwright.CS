@@ -3,10 +3,22 @@
 const executionStore = require('../services/executionStore');
 const historyService = require('../services/historyService');
 const playwrightRunner = require('../services/playwrightRunner');
+const evidenceManager = require('../services/evidenceManager');
 const artifactScanner = require('../services/artifactScanner');
 const { createExecution } = require('../utils/executionHelper');
 const { sendSuccess, sendOk, sendError } = require('../utils/responseHelper');
 const logger = require('../utils/logger');
+
+/** Retrieves test evidence for a given execution. */
+async function getExecutionEvidence(req, res, next) {
+  try {
+    const { id } = req.params;
+    const evidence = await evidenceManager.getEvidenceByExecution(id);
+    return sendSuccess(res, evidence);
+  } catch (err) {
+    return next(err);
+  }
+}
 
 /** Starts a new Playwright execution. */
 async function startExecution(req, res, next) {
@@ -154,6 +166,7 @@ async function deleteExecutions(req, res, next) {
       totalDeleted += historyCount;
       
       await artifactScanner.removeByExecIds(ids);
+      await evidenceManager.removeByExecIds(ids);
 
       logger.info(`[Controller] Deleted ${totalDeleted} selected executions`);
       return sendOk(res, { deletedCount: totalDeleted });
@@ -169,6 +182,7 @@ module.exports = {
   startExecution,
   listExecutions,
   getExecution,
+  getExecutionEvidence,
   stopExecution,
   deleteExecution,
   deleteExecutions,

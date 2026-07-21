@@ -11,3 +11,4 @@ uploads/logs/*
 !uploads/traces/.gitkeep
 !uploads/logs/.gitkeep
 *.log
+test-results

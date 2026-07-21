@@ -13,6 +13,7 @@
 // so this .js file is treated as CJS by Node, matching test.config.js.
 const { defineConfig, devices } = require('@playwright/test');
 const cfg = require('./config/test.config');
+const evidenceConfig = require('./config/evidence.config');
 
 module.exports = defineConfig({
   testDir: './tests',
@@ -23,7 +24,7 @@ module.exports = defineConfig({
   outputDir: cfg.paths.testResults,
 
   // ── Parallelism ──────────────────────────────────────────────────────────
-  fullyParallel: false,
+  fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: cfg.retries,
   // workers must be a number (not a raw string). parseInt gives Playwright
@@ -32,6 +33,7 @@ module.exports = defineConfig({
 
   // ── Reporter ─────────────────────────────────────────────────────────────
   reporter: [
+    ['./reporters/EvidenceReporter.js'],
     [
       'html',
       {
@@ -57,12 +59,11 @@ module.exports = defineConfig({
     actionTimeout:     cfg.timeouts.action,
     navigationTimeout: cfg.timeouts.navigation,
 
-    // Artifacts (all configurable from the dashboard).
-    // Playwright expects specific union literals ('off' | 'on' | ...).
-    // The env vars ARE valid values — the cast silences the @ts-check checker.
-    trace:      /** @type {any} */ (cfg.browser.trace),
-    video:      /** @type {any} */ (cfg.browser.video),
-    screenshot: /** @type {any} */ (cfg.browser.screenshot),
+    // Artifacts (configurable via evidence.config.js overriding test.config.js).
+    trace: evidenceConfig.captureTraces ? 'on' : /** @type {any} */ (cfg.browser.trace),
+    video: evidenceConfig.captureVideos ? 'on' : /** @type {any} */ (cfg.browser.video),
+    screenshot: evidenceConfig.captureScreenshots === 'ALL' ? 'on' : 
+                evidenceConfig.captureScreenshots === 'FAILURES_ONLY' ? 'only-on-failure' : 'off',
 
     // Browser context options (only spread when set)
     ...(cfg.browser.locale   ? { locale:   cfg.browser.locale }   : {}),

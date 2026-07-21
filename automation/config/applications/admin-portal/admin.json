@@ -1,0 +1,11 @@
+[
+  {
+    "id": "admin-placeholder",
+    "displayName": "Admin Placeholder",
+    "application": "admin-portal",
+    "role": "admin",
+    "email": "admin@example.com",
+    "description": "Placeholder admin account",
+    "passwordEnv": "ADMIN_PASSWORD"
+  }
+]

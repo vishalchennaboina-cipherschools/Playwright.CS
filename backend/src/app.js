@@ -62,6 +62,20 @@ function createApp() {
     }),
   );
 
+  // Serves Enterprise Test Evidence Management System artifacts.
+  app.use(
+    '/storage',
+    express.static(path.resolve(__dirname, '../../storage'), {
+      maxAge: '7d',
+      setHeaders: (res, filePath) => {
+        if (filePath.endsWith('.zip')) {
+          res.setHeader('Access-Control-Allow-Origin', '*');
+          res.setHeader('Content-Type', 'application/zip');
+        }
+      },
+    }),
+  );
+
   app.get('/health', (_req, res) => {
     res.json({
       status: 'healthy',
