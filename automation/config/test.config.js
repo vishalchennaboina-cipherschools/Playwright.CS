@@ -68,8 +68,8 @@ const config = Object.freeze({
   // ─── Credentials ─────────────────────────────────────────────────────────
   // Injected by backend. NEVER hard-code email/password in test files.
   credentials: Object.freeze({
-    email:    process.env.TEST_EMAIL    || '',
-    password: process.env.TEST_PASSWORD || '',
+    email: process.env.VALID_EMAIL || '',
+    password: process.env.STUDENT_PASSWORD || '',
   }),
 
   // ─── Test Data ───────────────────────────────────────────────────────────
@@ -81,27 +81,27 @@ const config = Object.freeze({
   // ─── Timeouts ────────────────────────────────────────────────────────────
   // All durations in milliseconds. No magic numbers in test files.
   timeouts: Object.freeze({
-    test:       envInt('TEST_TIMEOUT',       80000),
-    navigation: envInt('NAV_TIMEOUT',        60000),
-    action:     envInt('ACTION_TIMEOUT',     20000),
-    pageWait:   envInt('PAGE_WAIT_TIMEOUT',   1000),
+    test: envInt('TEST_TIMEOUT', 80000),
+    navigation: envInt('NAV_TIMEOUT', 60000),
+    action: envInt('ACTION_TIMEOUT', 20000),
+    pageWait: envInt('PAGE_WAIT_TIMEOUT', 1000),
   }),
 
   // ─── Browser / Context ───────────────────────────────────────────────────
   browser: Object.freeze({
-    trace:      process.env.TRACE      || 'on-first-retry',
-    video:      process.env.VIDEO      || 'off',
+    trace: process.env.TRACE || 'on-first-retry',
+    video: process.env.VIDEO || 'off',
     screenshot: process.env.SCREENSHOT || 'only-on-failure',
-    headless:   process.env.HEADLESS   !== 'false', // default true; pass HEADLESS=false for headed
-    slowMo:     envInt('SLOW_MO', 0),
-    locale:     envOpt('LOCALE'),
-    viewport:   envOpt('VIEWPORT') ? JSON.parse(process.env.VIEWPORT) : undefined,
+    headless: process.env.HEADLESS !== 'false', // default true; pass HEADLESS=false for headed
+    slowMo: envInt('SLOW_MO', 0),
+    locale: envOpt('LOCALE'),
+    viewport: envOpt('VIEWPORT') ? JSON.parse(process.env.VIEWPORT) : undefined,
   }),
 
   // ─── Output Paths ────────────────────────────────────────────────────────
   // Must work on both Linux (Docker/Render) and Windows (local dev).
   paths: Object.freeze({
-    testResults:  process.env.OUTPUT_DIR || '/tmp/test-results',
+    testResults: process.env.OUTPUT_DIR || '/tmp/test-results',
     reportOutput: process.env.REPORT_DIR || '/tmp/playwright-report',
   }),
 

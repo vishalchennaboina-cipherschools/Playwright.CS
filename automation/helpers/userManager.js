@@ -66,11 +66,11 @@ class UserManager {
     }
 
     // 1. Runtime Credentials
-    if (process.env.TEST_EMAIL && process.env.TEST_PASSWORD) {
+    if (process.env.TEST_EMAIL && process.env.STUDENT_PASSWORD) {
       return {
         ...user,
         email: process.env.TEST_EMAIL,
-        password: process.env.TEST_PASSWORD
+        password: process.env.STUDENT_PASSWORD
       };
     }
 

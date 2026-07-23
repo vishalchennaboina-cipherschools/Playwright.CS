@@ -1,104 +1,212 @@
 // @ts-check
 // tests/CS-smoke/batches.spec.js
+//
+// ─── Batches Smoke Test Suite ──────────────────────────────────────────────
+// Enterprise-level smoke tests for the CipherSchools Batches module.
+// Tests run serially to avoid state conflicts on a single account.
+//
+// Architecture:
+//   spec → BatchService  (business workflows)
+//        → BatchValidator (assertions)
+//        → BatchesPage    (UI interactions — never called directly from spec)
+// ──────────────────────────────────────────────────────────────────────────
 
-const { test, expect } = require('@playwright/test');
-const { BasePage } = require('../../pages/BasePage');
-const config = require('../../config/test.config');
+'use strict';
 
-test.describe('Batches tests', () => {
+const { test } = require('@playwright/test');
+const { BatchesPage } = require('../../pages/BatchesPage');
+const { BatchService } = require('../../services/BatchService');
+const { BatchValidator } = require('../../validators/BatchValidator');
+
+// Serial execution — single account, state-sensitive tests.
+test.describe.configure({ mode: 'serial' });
+
+test.describe('Batches Smoke Tests', () => {
+  /** @type {BatchService} */
+  let service;
+  /** @type {BatchValidator} */
+  let validator;
+  /** @type {BatchesPage} */
+  let batchesPage;
+
+  let sharedBatchSlug = '';
+  let sharedFirstName = '';
+
   test.beforeEach(async ({ page }) => {
-    const basePage = new BasePage(page);
-    await basePage.dismissCookieBanner();
+    batchesPage = new BatchesPage(page);
+    service = new BatchService(page);
+    validator = new BatchValidator(batchesPage, page);
+    await batchesPage.dismissCookieBanner();
   });
 
-  test('Verify batches page', async ({ page }) => {
-    await page.goto('/');
+  // ─────────────────────────────────────────────────────────────────────────
+  // BAT_SMK_001 — Verify My Batches page loads successfully
+  // ─────────────────────────────────────────────────────────────────────────
+  test('BAT_SMK_001 — Verify My Batches page loads successfully', async () => {
+    await service.openBatchesPage();
+    await validator.verifyBatchesLoaded();
+  });
 
-    const basePage = new BasePage(page);
-    // Use expect.toPass to retry the click in case SPA hydration swallows the first click
-    await expect(async () => {
-      await basePage.goToBatches();
-      await expect(page).toHaveURL('/batches');
-    }).toPass({ timeout: 15000 });
-    
-    await expect(page.getByRole('heading', { name: 'My Batches' })).toBeVisible();
-
-    // Open the first available batch link dynamically
-    const firstBatchLink = page.locator('a[href^="/batches/"]').first();
-    const batchHref = await firstBatchLink.getAttribute('href') || '';
-    const batchSlug = batchHref.split('/').pop() || '';
-    
-    if (!batchSlug) {
+  // ─────────────────────────────────────────────────────────────────────────
+  // BAT_SMK_002 — Verify enrolled batches are displayed
+  // ─────────────────────────────────────────────────────────────────────────
+  test('BAT_SMK_002 — Verify enrolled batches are displayed', async () => {
+    await service.openBatchesPage();
+    // The first batch link serves as verification that enrolled batches are displayed
+    sharedBatchSlug = await batchesPage.getFirstBatchSlug();
+    if (!sharedBatchSlug) {
       throw new Error('No batches found for the user');
     }
-    
-    await firstBatchLink.click();
-    await expect(page).toHaveURL(`/batches/${batchSlug}`);
-    await expect(page.getByRole('heading', { name: new RegExp(`^Hey ${config.testData.displayName.split(' ')[0]}`, 'i') })).toBeVisible();
+  });
 
-    // Syllabus
-    await basePage.goToSyllabus();
-    await expect(page).toHaveURL(`/batches/${batchSlug}/syllabus`);
-    await expect(page.getByRole('heading', { name: 'Syllabus' })).toBeVisible();
+  // ─────────────────────────────────────────────────────────────────────────
+  // BAT_SMK_003 — Verify user can open a batch
+  // ─────────────────────────────────────────────────────────────────────────
+  test('BAT_SMK_003 — Verify user can open a batch', async () => {
+    await service.openBatchesPage();
+    sharedBatchSlug = await service.openFirstBatch();
+    sharedFirstName = service.getFirstName();
+  });
 
-    // Lectures
-    await page.getByRole('link', { name: 'Lectures' }).click();
-    await expect(page).toHaveURL(new RegExp(`/batches/${batchSlug}/contents/.*`));
-    await expect(page.getByRole('heading', { name: 'Lecture Stages' })).toBeVisible();
+  // ─────────────────────────────────────────────────────────────────────────
+  // BAT_SMK_004 — Verify Batch Dashboard loads correctly
+  // ─────────────────────────────────────────────────────────────────────────
+  test('BAT_SMK_004 — Verify Batch Dashboard loads correctly', async () => {
+    await service.openBatchesPage();
+    await service.openFirstBatch();
+    await validator.verifyBatchDashboardLoaded(sharedBatchSlug, sharedFirstName);
+  });
 
-    // Calendar
-    await page.getByRole('link', { name: 'Calendar' }).click();
-    await expect(page).toHaveURL(`/batches/${batchSlug}/calendar`);
-    await expect(page.getByRole('heading', { name: 'My Calendar' })).toBeVisible();
+  // ─────────────────────────────────────────────────────────────────────────
+  // BAT_SMK_005 — Verify Syllabus page opens
+  // ─────────────────────────────────────────────────────────────────────────
+  test('BAT_SMK_005 — Verify Syllabus page opens', async () => {
+    await service.openBatchesPage();
+    await service.openFirstBatch();
+    await service.navigateToSyllabus();
+    await validator.verifySyllabusLoaded(sharedBatchSlug);
+  });
 
-    // Practice
-    await page.getByRole('link', { name: 'Practice', exact: true }).click();
-    await expect(page).toHaveURL(`/batches/${batchSlug}/problems`);
-    await expect(page.getByRole('heading', { name: 'Practice' })).toBeVisible();
+  // ─────────────────────────────────────────────────────────────────────────
+  // BAT_SMK_006 — Verify Lecture page opens
+  // ─────────────────────────────────────────────────────────────────────────
+  test('BAT_SMK_006 — Verify Lecture page opens', async () => {
+    await service.openBatchesPage();
+    await service.openFirstBatch();
+    await service.navigateToLectures();
+    await validator.verifyLecturesLoaded(sharedBatchSlug);
+  });
 
-    // Practice sub-sections
-    await page.locator('#tab-problems').click();
-    await expect(page).toHaveURL(`/batches/${batchSlug}/problems?type=additional`);
+  // ─────────────────────────────────────────────────────────────────────────
+  // BAT_SMK_007 — Verify Calendar page opens
+  // ─────────────────────────────────────────────────────────────────────────
+  test('BAT_SMK_007 — Verify Calendar page opens', async () => {
+    await service.openBatchesPage();
+    await service.openFirstBatch();
+    await service.navigateToCalendar();
+    await validator.verifyCalendarLoaded(sharedBatchSlug);
+  });
 
-    await page.locator('#tab-assignments').click();
-    await expect(page).toHaveURL(`/batches/${batchSlug}/problems?type=assignments`);
+  // ─────────────────────────────────────────────────────────────────────────
+  // BAT_SMK_008 — Verify Practice page opens
+  // ─────────────────────────────────────────────────────────────────────────
+  test('BAT_SMK_008 — Verify Practice page opens', async () => {
+    await service.openBatchesPage();
+    await service.openFirstBatch();
+    await service.navigateToPractice();
+    await validator.verifyPracticeLoaded(sharedBatchSlug);
+  });
 
-    // Tests
-    await page.getByRole('link', { name: 'Tests' }).click();
-    await expect(page).toHaveURL(`/batches/${batchSlug}/tests`);
-    await expect(page.getByRole('heading', { name: 'Proctored Test' })).toBeVisible();
+  // ─────────────────────────────────────────────────────────────────────────
+  // BAT_SMK_009 — Verify Additional Practice tab opens
+  // ─────────────────────────────────────────────────────────────────────────
+  test('BAT_SMK_009 — Verify Additional Practice tab opens', async () => {
+    await service.openBatchesPage();
+    await service.openFirstBatch();
+    await service.navigateToPractice();
+    await service.navigateToPracticeProblems();
+    await validator.verifyPracticeAdditionalLoaded(sharedBatchSlug);
+  });
 
-    // Projects
-    await page.getByRole('link', { name: 'Projects' }).click();
-    await expect(page).toHaveURL(`/batches/${batchSlug}/projects`);
-    await expect(page.getByRole('heading', { name: 'Projects' })).toBeVisible();
+  // ─────────────────────────────────────────────────────────────────────────
+  // BAT_SMK_010 — Verify Assignments tab opens
+  // ─────────────────────────────────────────────────────────────────────────
+  test('BAT_SMK_010 — Verify Assignments tab opens', async () => {
+    await service.openBatchesPage();
+    await service.openFirstBatch();
+    await service.navigateToPractice();
+    await service.navigateToPracticeAssignments();
+    await validator.verifyPracticeAssignmentsLoaded(sharedBatchSlug);
+  });
 
-    // Resources
-    await page.getByRole('link', { name: 'Resources' }).click();
-    await expect(page).toHaveURL(`/batches/${batchSlug}/resources`);
-    await expect(page.getByRole('heading', { name: 'Resources', exact: true })).toBeVisible();
+  // ─────────────────────────────────────────────────────────────────────────
+  // BAT_SMK_011 — Verify Tests page opens
+  // ─────────────────────────────────────────────────────────────────────────
+  test('BAT_SMK_011 — Verify Tests page opens', async () => {
+    await service.openBatchesPage();
+    await service.openFirstBatch();
+    await service.navigateToTests();
+    await validator.verifyTestsLoaded(sharedBatchSlug);
+  });
 
-    // Performance
-    await page.getByRole('link', { name: 'Performance' }).click();
-    await expect(page).toHaveURL(`/batches/${batchSlug}/performance`);
-    await expect(page.getByRole('heading', { name: 'Student Performance' })).toBeVisible();
+  // ─────────────────────────────────────────────────────────────────────────
+  // BAT_SMK_012 — Verify Projects page opens
+  // ─────────────────────────────────────────────────────────────────────────
+  test('BAT_SMK_012 — Verify Projects page opens', async () => {
+    await service.openBatchesPage();
+    await service.openFirstBatch();
+    await service.navigateToProjects();
+    await validator.verifyProjectsLoaded(sharedBatchSlug);
+  });
 
-    // Updates
-    await page.getByRole('link', { name: 'Updates' }).click();
-    await expect(page).toHaveURL(`/batches/${batchSlug}/announcements`);
-    await expect(page.getByRole('heading', { name: 'Updates' })).toBeVisible();
+  // ─────────────────────────────────────────────────────────────────────────
+  // BAT_SMK_013 — Verify Resources page opens
+  // ─────────────────────────────────────────────────────────────────────────
+  test('BAT_SMK_013 — Verify Resources page opens', async () => {
+    await service.openBatchesPage();
+    await service.openFirstBatch();
+    await service.navigateToResources();
+    await validator.verifyResourcesLoaded(sharedBatchSlug);
+  });
 
-    // Help & Support
-    await page.getByRole('link', { name: 'Help & Support' }).click();
-    await expect(page).toHaveURL(`/batches/${batchSlug}/support`);
-    await expect(page.getByRole('heading', { name: 'Quick Troubleshoot' })).toBeVisible();
+  // ─────────────────────────────────────────────────────────────────────────
+  // BAT_SMK_014 — Verify Performance page opens
+  // ─────────────────────────────────────────────────────────────────────────
+  test('BAT_SMK_014 — Verify Performance page opens', async () => {
+    await service.openBatchesPage();
+    await service.openFirstBatch();
+    await service.navigateToPerformance();
+    await validator.verifyPerformanceLoaded(sharedBatchSlug);
+  });
 
-    // Dismiss cookie banner before clicking My Batches link
-    await basePage.dismissCookieBanner();
+  // ─────────────────────────────────────────────────────────────────────────
+  // BAT_SMK_015 — Verify Updates page opens
+  // ─────────────────────────────────────────────────────────────────────────
+  test('BAT_SMK_015 — Verify Updates page opens', async () => {
+    await service.openBatchesPage();
+    await service.openFirstBatch();
+    await service.navigateToUpdates();
+    await validator.verifyUpdatesLoaded(sharedBatchSlug);
+  });
 
-    // Back to My Batches
-    await basePage.goToBatches();
-    await expect(page).toHaveURL('/batches');
-    await expect(page.getByRole('heading', { name: 'My Batches' })).toBeVisible();
+  // ─────────────────────────────────────────────────────────────────────────
+  // BAT_SMK_016 — Verify Help & Support page opens
+  // ─────────────────────────────────────────────────────────────────────────
+  test('BAT_SMK_016 — Verify Help & Support page opens', async () => {
+    await service.openBatchesPage();
+    await service.openFirstBatch();
+    await service.navigateToSupport();
+    await validator.verifySupportLoaded(sharedBatchSlug);
+  });
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // BAT_SMK_017 — Verify user can navigate back to My Batches
+  // ─────────────────────────────────────────────────────────────────────────
+  test('BAT_SMK_017 — Verify user can navigate back to My Batches', async () => {
+    await service.openBatchesPage();
+    await service.openFirstBatch();
+    await batchesPage.dismissCookieBanner();
+    await batchesPage.goToBatches();
+    await validator.verifyBatchesLoaded();
   });
 });

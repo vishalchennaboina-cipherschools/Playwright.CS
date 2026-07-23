@@ -28,7 +28,10 @@ async function processExecution(execId) {
       return;
     }
     
-    await TestEvidence.insertMany(records);
+    await TestEvidence.create({
+      executionId: execId,
+      testCases: records
+    });
     logger.info(`[EvidenceManager] Successfully processed ${records.length} evidence records for ${execId}`);
     
   } catch (err) {
@@ -36,9 +39,9 @@ async function processExecution(execId) {
   }
 }
 
-/** Fetches all evidence records for a given execution. */
+/** Fetches evidence record for a given execution. */
 async function getEvidenceByExecution(execId) {
-  return await TestEvidence.find({ executionId: execId }).lean().exec();
+  return await TestEvidence.findOne({ executionId: execId }).lean().exec();
 }
 
 /** Removes all evidence records associated with multiple execution IDs. */
